@@ -1,0 +1,5 @@
+﻿list,rank_in_list,equipment_id,part,grade,operation_status,first_warning_at,first_alarm_at,quality_impact,inspected_n,defect_n,defect_rate,risk_level,anomaly_score
+비상,1,EQP-001,용기 몸체,1,점검중,13:26,13:33,있음,25,3,0.12,CRITICAL,99.8
+비상,2,EQP-002,속뚜껑,2,이상감지,14:04,14:04,미확인,0,0,,CRITICAL,83.0
+비상,3,EQP-004,속뚜껑,2,이상감지,14:04,14:04,미확인,0,0,,CRITICAL,76.0
+예고,1,EQP-003,뚜껑,3,가동,13:41,,있음,24,1,0.0417,CRITICAL,97.8
