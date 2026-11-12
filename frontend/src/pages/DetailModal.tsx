@@ -1,12 +1,13 @@
-import { useEffect, useRef, useState } from 'react'
+import { Suspense, lazy, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getIncident } from '../api'
-import { Machine3D } from '../components/Machine3D'
 import { useApp } from '../components/Shell'
 import { useLoad } from '../components/useLoad'
 import { AiTag, GradeChip, MachineFigure, OpChip, QualityLine, Sparkline, TONE, cx, diffText, fmt, tone } from '../components/ui'
 
 /** 카드 클릭 → 상세 팝업: 판단 근거(목록) · 확인할 것 · 점검 시작 */
+// 3D(three.js + 모델 약 3MB)는 상세를 처음 열 때만 불러온다. 받는 동안은 사진 + 점 표시
+const Machine3D = lazy(() => import('../components/Machine3D').then((m) => ({ default: m.Machine3D })))
 const KIND: Record<string, string> = { '기존 센서 알람': '알람', 'Q-First 이상 징후': '이상 징후' }
 
 export function DetailModal({ id, onClose }: { id: string; onClose: () => void }) {
@@ -32,7 +33,9 @@ export function DetailModal({ id, onClose }: { id: string; onClose: () => void }
         className="flex max-h-full w-[1100px] flex-col gap-5 overflow-auto rounded-2xl bg-card p-7 outline-none">
         <div className="flex items-start gap-4">
           <span className="num text-[52px] font-semibold leading-none">{inc.rank}</span>
-          <Machine3D zones={inc.zones} group={inc.group} width={380} height={220} fallback={<MachineFigure id={inc.equipment.id} zones={inc.zones} group={inc.group} size={150} />} />
+          <Suspense fallback={<MachineFigure id={inc.equipment.id} zones={inc.zones} group={inc.group} size={150} />}>
+            <Machine3D zones={inc.zones} group={inc.group} width={380} height={220} fallback={<MachineFigure id={inc.equipment.id} zones={inc.zones} group={inc.group} size={150} />} />
+          </Suspense>
           <div className="flex flex-col">
             <h2 className="text-[30px] font-bold leading-tight">{inc.equipment.no}</h2>
             <span className="num text-[14px] text-sub">{inc.equipment.name}</span>

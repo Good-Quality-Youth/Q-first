@@ -57,3 +57,5 @@ scripts/
 설비 사진(`photo-inj.webp`, `photo-tcu.webp`, `eqp-sprite.webp`)은 팀에서 AI로 직접 만든 이미지입니다. 실제 제조사 제품 사진은 쓰지 않습니다.
 
 `src/assets/machine.glb`는 사출기 이미지 한 장으로 만든 3D 모델입니다(AI 생성물). 텍스처는 `machine-tex.jpg`(2048px)로 분리했습니다. 이상 부위는 `machineScene.js`의 `ZONE_BOX` 좌표에 반투명 덩어리로 표시합니다. WebGL이 안 되면 사진 + 점으로 대체됩니다.
+
+three.js와 모델·텍스처는 상세 팝업을 처음 열 때만 불러옵니다(첫 화면 JS 약 340KB). 받는 동안에는 사진 + 점이 보입니다. 공유용 한 파일 빌드(`build:single`)에서는 모델이 data URI로 함께 들어갑니다.

@@ -4,9 +4,18 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js'
 import type { AlertGroup, MachineZone } from '../api/types'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
-import texUrl from '../assets/machine-tex.jpg?inline'
-import glbData from '../assets/machine.glb?inline'
+// ?url: 일반 빌드는 별도 파일 주소, 한 파일 빌드(공유 링크)는 data URI로 들어온다
+import texUrl from '../assets/machine-tex.jpg?url'
+import glbUrl from '../assets/machine.glb?url'
 import { fitModel, makeStage, zoneMarkers } from './machineScene'
+
+/** 모델 파일 읽기: 공유 링크(data URI)는 직접 풀고, 일반 배포는 처음 상세를 열 때 한 번 받아 온다 */
+async function loadGlb(url: string): Promise<ArrayBuffer> {
+  if (url.startsWith('data:')) return Uint8Array.from(atob(url.slice(url.indexOf(',') + 1)), (c) => c.charCodeAt(0)).buffer
+  const res = await fetch(url)
+  if (!res.ok) throw new Error(`3D 모델을 받지 못함 (${res.status})`)
+  return res.arrayBuffer()
+}
 
 const LABEL: Record<MachineZone, string> = { hydraulic: '유압', barrel: '배럴', screw: '스크류 구동', mold: '금형' }
 /** 이상 부위가 잘 보이는 시작 각도 (사출부는 오른쪽 앞, 금형은 왼쪽 앞) */
@@ -29,15 +38,13 @@ export function Machine3D({ zones, group, width = 420, height = 250, fallback }:
       scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture
       scene.environmentIntensity = 0.45
       renderer.toneMappingExposure = 0.82
-      // 모델·텍스처를 data URI로 넣어 두고 직접 푼다 (fetch·blob을 쓰지 않아 공유 페이지에서도 동작)
-      const bin = Uint8Array.from(atob(glbData.slice(glbData.indexOf(',') + 1)), (c) => c.charCodeAt(0))
       const tex = new THREE.TextureLoader().load(texUrl)
       tex.flipY = false; tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = renderer.capabilities.getMaxAnisotropy()
-      new GLTFLoader().parse(bin.buffer, '', (g) => {
+      loadGlb(glbUrl).then((buf) => new GLTFLoader().parse(buf, '', (g) => {
         if (!alive) return
         g.scene.traverse((o) => { const m = (o as THREE.Mesh).material as THREE.MeshStandardMaterial | undefined; if (m) { m.map = tex; m.needsUpdate = true } })
         scene.add(fitModel(g.scene))
-      }, () => setFailed(true))
+      }, () => setFailed(true))).catch(() => setFailed(true))
       scene.add(zoneMarkers(zones, group === 'warning' ? 0x1463ff : 0xf01e2c))
       camera.position.set(...VIEW[zones[0] ?? 'barrel'])
       const controls = new OrbitControls(camera, canvas)
