@@ -1,0 +1,62 @@
+/* 폰트는 index.html에서 CDN으로 불러온다 (배포 용량 절감) */
+@import "tailwindcss";
+
+/* 브랜드 토큰 (브랜드 가이드라인 02 · 컬러, 라이트) — 다크는 [data-theme=dark]에서 같은 이름으로 덮어쓴다 */
+@theme {
+  --font-sans: "Wanted Sans Variable", "Wanted Sans", system-ui, sans-serif;
+  --font-num: "Saira Semi Condensed", "Wanted Sans Variable", sans-serif;
+
+  --color-page: #E9ECF0;
+  --color-card: #FFFFFF;
+  --color-card-bd: #C9CED6;
+  --color-band: #17191C;
+  --color-band-fg: #FFFFFF;
+  --color-band-mute: #C2C8D0;
+  --color-band-line: #4A505A;
+  --color-ink: #17191C;
+  --color-sub: #454C56;
+  --color-mute: #636B77;
+  --color-soft: #F4F5F7;
+  --color-line: #E1E4E9;
+  --color-inv: #17191C;
+  --color-inv-fg: #FFFFFF;
+  --color-spr: #EBECF0;
+
+  --color-red: #F01E2C;
+  --color-red-tx: #D7101E;
+  --color-red-bg: #FEE8EA;
+  --color-blue: #1463FF;
+  --color-blue-tx: #0B5BFF;
+  --color-blue-bg: #E8EFFF;
+  --color-green: #00B85C;
+  --color-green-tx: #007A3B;
+  --color-green-bg: #E6F8EF;
+  --color-amber: #FFB000;
+  --color-amber-bg: #FFF6DB;
+}
+
+html, body, #root { height: 100%; }
+body { background: var(--color-page); color: var(--color-ink); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; word-break: keep-all; }
+.num { font-family: var(--font-num); font-variant-numeric: tabular-nums; }
+button { cursor: pointer; }
+button:disabled { cursor: not-allowed; }
+:focus-visible { outline: 3px solid var(--color-blue); outline-offset: 2px; }
+
+/* 누를 수 있는 것만 반응한다: 버튼은 호버·누름 피드백, 태그·칩·배지는 반응 없음 */
+button:not(:disabled), a[href], [role="button"], label.btn-line { transition: background-color .12s, border-color .12s, color .12s, box-shadow .12s, transform .06s; }
+button:not(:disabled):active, [role="button"]:active { transform: translateY(1px); }
+.btn-solid:not(:disabled):hover { background-color: color-mix(in srgb, var(--color-inv) 82%, white); } /* 검정 버튼 → 한 단계 밝게 */
+.btn-line:not(:disabled):hover { background-color: var(--color-soft); border-color: var(--color-ink); } /* 테두리·흰 버튼 */
+.btn-text:not(:disabled):hover { color: var(--color-ink); text-decoration: underline; text-underline-offset: 4px; } /* 글자 버튼 */
+.btn-light:not(:disabled):hover { background-color: var(--color-line); }                 /* 어두운 띠 위 흰 버튼 */
+.btn-on-dark:not(:disabled):hover { background-color: rgba(255, 255, 255, 0.12); }        /* 어두운 띠 위 글자 버튼 */
+
+/* Q-First 판단 표면: 세로 골 유리 질감만 (빛 번짐·그라데이션 없음). 색은 늘리지 않는다 */
+.ai-surface {
+  background:
+    repeating-linear-gradient(90deg,
+      rgba(255, 255, 255, 0.075) 0px, rgba(255, 255, 255, 0.02) 2px,
+      rgba(255, 255, 255, 0) 5px, rgba(0, 0, 0, 0.28) 10px, rgba(255, 255, 255, 0.075) 12px),
+    #17191C;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.10);
+}

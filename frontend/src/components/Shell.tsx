@@ -1,0 +1,110 @@
+import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react'
+import { NavLink, Outlet } from 'react-router-dom'
+import logo from '../assets/logo-symbol.png'
+import { resetStore, subscribe } from '../api'
+import type { Snapshot } from '../api/types'
+import { ChatDrawer } from './Chat'
+import { cx } from './ui'
+
+type Ctx = {
+  snap: Snapshot; setSnap: (s: Snapshot) => void; toast: (t: string) => void; version: number
+  demo: boolean; news: boolean; dismissNews: () => void; arrive: () => void; restart: () => void
+  chat: { open: boolean; incidentId?: string }; ask: (incidentId?: string) => void; closeChat: () => void
+}
+const AppCtx = createContext<Ctx>({ snap: '1405', setSnap: () => {}, toast: () => {}, version: 0, demo: false, news: false, dismissNews: () => {}, arrive: () => {}, restart: () => {}, chat: { open: false }, ask: () => {}, closeChat: () => {} })
+
+/** 주소에 ?demo 가 있으면 시연 모드: 14:00에서 시작하고, 발표자만 쓰는 '다음 장면' 버튼이 보인다 */
+const isDemo = () => {
+  // 공유 링크(아티팩트)용 빌드는 주소에 ?demo를 붙일 수 없어 시연 모드로 시작한다
+  if (import.meta.env.VITE_DEMO_DEFAULT === '1') return true
+  const { search, hash } = window.location
+  return /[?&]demo\b/.test(search) || /[?&]demo\b/.test(hash)
+}
+export const useApp = () => useContext(AppCtx)
+
+export function AppProvider({ children }: { children: ReactNode }) {
+  const demo = useRef(isDemo()).current
+  // 시연 모드는 14:00에서 시작, 그 외(사용성 테스트)는 14:05 상태로 시작
+  const [snap, setSnap] = useState<Snapshot>(demo ? '1400' : '1405')
+  const [news, setNews] = useState(false)
+  const [msg, setMsg] = useState('')
+  const [version, setVersion] = useState(0)
+  const [chat, setChat] = useState<{ open: boolean; incidentId?: string }>({ open: false })
+  const ask = useCallback((incidentId?: string) => setChat({ open: true, incidentId }), [])
+  const closeChat = useCallback(() => setChat((c) => ({ ...c, open: false })), [])
+  const timer = useRef<number | undefined>(undefined)
+  const toast = useCallback((t: string) => {
+    setMsg(t)
+    window.clearTimeout(timer.current)
+    timer.current = window.setTimeout(() => setMsg(''), 2600)
+  }, [])
+  // 저장소가 바뀌면 화면 다시 읽기
+  useEffect(() => subscribe(() => setVersion((v) => v + 1)), [])
+  const arrive = useCallback(() => { setSnap('1405'); setNews(true) }, [])
+  const restart = useCallback(() => { resetStore(); setNews(false); setSnap('1400'); window.location.hash = '#/' }, [])
+  return (
+    <AppCtx.Provider value={{ snap, setSnap, toast, version, demo, news, dismissNews: () => setNews(false), arrive, restart, chat, ask, closeChat }}>
+      {children}
+      <div aria-live="polite" className="pointer-events-none fixed inset-x-0 bottom-8 flex justify-center">
+        {msg && <div className="rounded-xl bg-inv px-5 py-3 text-[14px] font-semibold text-inv-fg shadow-lg">{msg}</div>}
+      </div>
+    </AppCtx.Provider>
+  )
+}
+
+export function Segmented<T extends string>({ value, options, onChange, label }: { value: T; options: { v: T; t: string; disabled?: boolean }[]; onChange: (v: T) => void; label: string }) {
+  return (
+    <div role="radiogroup" aria-label={label} className="flex rounded-xl border border-card-bd bg-card p-1">
+      {options.map((o) => (
+        <button key={o.v} role="radio" aria-checked={value === o.v} disabled={o.disabled} onClick={() => onChange(o.v)}
+          className={cx('rounded-lg px-3.5 py-1.5 text-[13px] font-bold', value === o.v ? 'bg-inv text-inv-fg' : 'btn-line text-ink disabled:text-mute/60')}>
+          {o.t}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+const NAV = [
+  { to: '/', t: '사건', end: true },
+  { to: '/history', t: '이력' },
+]
+
+export function Layout() {
+  const { snap, demo, arrive, restart, ask } = useApp()
+  return (
+    <div className="min-h-full">
+      <header className="flex items-center gap-4 px-6 pt-4">
+        <img src={logo} alt="Q-First" className="h-8 w-8" />
+        <nav aria-label="주 메뉴" className="flex rounded-xl border border-card-bd bg-card p-1">
+          {NAV.map((n) => (
+            <NavLink key={n.to} to={n.to} end={n.end}
+              className={({ isActive }) => cx('rounded-lg px-4 py-1.5 text-[14px] font-bold', isActive ? 'bg-inv text-inv-fg' : 'btn-line text-ink')}>
+              {n.t}
+            </NavLink>
+          ))}
+        </nav>
+        <span className="text-[13px] text-mute">크림 용기 사출 라인 · 사출기 10대 · 가상 데이터</span>
+        <div className="flex-1" />
+        {demo && (
+          <div className="flex items-center gap-1 rounded-xl border border-dashed border-card-bd p-1" aria-label="시연 제어">
+            <span className="px-2 text-[11px] font-bold text-mute">시연</span>
+            {snap === '1400'
+              ? <button onClick={arrive} className="btn-solid rounded-lg bg-inv px-3 py-1.5 text-[13px] font-bold text-inv-fg">다음 장면 ▶ 14:05 검사 결과 도착</button>
+              : <span className="px-2 text-[13px] font-semibold text-sub">14:05 반영됨</span>}
+            <button onClick={restart} className="btn-line rounded-lg px-3 py-1.5 text-[13px] font-bold text-sub">↺ 처음으로</button>
+          </div>
+        )}
+        <button onClick={() => ask()} className="flex items-center gap-2 rounded-xl border border-card-bd bg-card px-4 py-2 text-[13px] font-bold btn-line">💬 물어보기</button>
+        <div className="flex items-center gap-2 rounded-xl border border-card-bd bg-card px-4 py-2 text-[13px]">
+          <span className="h-2 w-2 animate-pulse rounded-full bg-green" aria-hidden="true" />
+          <span className="text-sub">마지막 판단</span>
+          <b className="num text-[15px]">{snap === '1405' ? '14:05' : '14:00'}</b>
+          <span className="text-mute">· 실시간</span>
+        </div>
+      </header>
+      <Outlet />
+      <ChatDrawer />
+    </div>
+  )
+}
