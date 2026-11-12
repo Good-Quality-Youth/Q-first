@@ -97,7 +97,7 @@ export const INCIDENTS: IncDef[] = [
     ],
     checklist: ['사출 압력·유압 회로 확인', '배럴 히터 밴드·열전대 확인', '같은 몸체 LOT 치수 추가 확인'],
     checkZones: ['hydraulic', 'barrel', null],
-    status: 'assigned', assignee: 'OP-006',
+    status: 'assigned', assignee: 'OP-002', // inspection_guide.assigned_inspector (13:58 착수)
   },
   {
     id: 'IG-0015', eqp: 'EQP-002', group: 'emergency', appearsAt: '1405', detectedAt: '14:04', alarmAt: '14:04', zones: ['hydraulic'],
