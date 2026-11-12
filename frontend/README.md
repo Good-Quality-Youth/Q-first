@@ -26,6 +26,7 @@ React 19 · Vite 6 · TypeScript · Tailwind CSS v4 · React Router(HashRouter) 
 
 ```
 src/
+  api/contract.ts     API v1.0 계약 타입 (문서 §3~§5 그대로. 문서가 바뀌면 여기부터 고친다)
   api/types.ts        화면이 쓰는 데이터 형식 (API v1.0으로 옮기는 중)
   api/mock.ts         가상 데이터로 사건·판단·이력을 만드는 곳
   api/demo-data.json  데이터셋 v7에서 뽑은 센서값·품질·지난 이력
