@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "build:single": "tsc -b && vite build --mode single"
+    "build:single": "tsc -b && vite build --mode single",
+    "check:fixtures": "node --experimental-strip-types --no-warnings scripts/check-fixtures.ts"
   },
   "dependencies": {
     "react": "^19.1.0",

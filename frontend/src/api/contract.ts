@@ -1,7 +1,8 @@
 /**
- * Q-First 프론트–백엔드 API v1.0 계약 타입 (2026-11-11, 백엔드 확정본)
+ * Q-First 프론트–백엔드 API 계약 타입
+ * v1.0 (2026-11-11, 백엔드 확정본) + v1.1 (2026-11-12, 조사 상태·시연 재생 추가)
  *
- * - 이 파일은 API 문서 §3~§5의 타입을 그대로 옮긴 것이다. 문서가 바뀌면 이 파일을 먼저 고친다.
+ * - 이 파일은 API 문서의 타입을 그대로 옮긴 것이다. 문서가 바뀌면 이 파일을 먼저 고친다.
  * - 화면 전용 타입(types.ts)은 이 계약으로 옮기는 중이다. 화면은 이 타입을 받아 표시용으로 바꿔 쓴다.
  * - 경로: /api/v1, JSON camelCase, 시각은 오프셋이 있는 ISO 8601(응답은 UTC `Z`).
  *   표시는 반드시 Board.displayTimeZone으로 변환한다(브라우저 시간대를 쓰지 않는다).
@@ -38,6 +39,29 @@ export type Quality = {
 }
 
 export type Step = { code: string; label: string }
+
+/**
+ * v1.1 확인 항목. baseline = 기존 지침, investigation = 조회된 근거로 구체화된 지침(evidenceIds 1개 이상).
+ * evidenceIds는 같은 사건·판단 버전 상세의 evidence[].id를 가리킨다.
+ */
+export type CheckItem = Step & {
+  source: 'baseline' | 'investigation'
+  evidenceIds: string[]
+}
+
+/**
+ * v1.1 에이전트 조사 작업(최신 1건). 등록된 작업이 없으면 null.
+ * 신규 예고 게시·새 기존 비상 알람 수신 때 등록된다. running은 큐 대기와 실행을 포함한다.
+ * 실패해도 기존 점검 안내는 그대로 쓴다.
+ */
+export type Investigation = {
+  id: string
+  trigger: 'newWarning' | 'emergencyAlarm'
+  status: 'running' | 'completed' | 'failed'
+  /** 실행 중·실패: 입력 판단 버전 / 완료: 결과가 연결된 판단 버전 */
+  judgmentRevision: number
+  failureCode: 'TIMEOUT' | 'SERVICE_UNAVAILABLE' | 'INVALID_RESULT' | null
+}
 export type Metric = 'injectionPressure' | 'barrelTemperature' | 'screwSpeed' | 'vibration' | 'motorCurrent'
 
 /** 대표 신호. band(평소 범위)는 null일 수 있다 → 화면은 기준값·알람 한계로 그린다 */
@@ -68,8 +92,9 @@ export type Card = {
   rankReason: string
   operation: Operation
   quality: Quality
-  firstCheck: Step
+  firstCheck: CheckItem
   signal: Signal
+  investigation: Investigation | null
 }
 
 export type Board = {
@@ -78,6 +103,8 @@ export type Board = {
   asOf: Time
   displayTimeZone: string
   notificationCursor: string
+  /** v1.1 시연 재생 상태. 일반 환경에서는 null */
+  replay: Replay | null
   summary: {
     emergencyCount: number
     warningCount: number
@@ -146,13 +173,15 @@ export type IncidentDetail = {
   /** 번호 내림차순 */
   revisions: Revision[]
   evidence: Evidence[]
-  checklist: Step[]
+  checklist: CheckItem[]
   signal: Signal
   zones: ('hydraulic' | 'barrel' | 'screw' | 'mold')[]
   defectTypes: string[]
   /** operation·work는 조회 시점의 현재 값 (과거 판단과 분리해 표시) */
   operation: Operation
   work: Work
+  /** 과거 revision을 지정하면 그 판단 버전에 연결된 조사만 온다(없으면 null) */
+  investigation: Investigation | null
 }
 
 // ── GET /incidents/{id}/series?revision=&metric= ───────
@@ -164,6 +193,17 @@ export type Series = Signal & {
   to: Time
   points: { at: Time; value: number | null }[]
 }
+
+// ── POST /demo/replay/next (v1.1, 시연 환경 전용) ─────────
+/**
+ * 버튼 한 번 = 다음 시연 시점까지 원본 기록 재생 (초기 준비 → 13:41 → 14:00 → 14:05 → 14:15).
+ * 200을 받으면 GET /board를 바로 다시 부르고, 열린 상세는 새 카드 revision으로 갱신한다.
+ * 조사 완료는 같은 재생 시각·step에서 snapshotVersion만 올라가므로 폴링으로 반영한다.
+ * Idempotency-Key 필수. 409 REPLAY_STEP_CONFLICT·REPLAY_FINISHED면 board를 다시 조회한다.
+ */
+export type Replay = { currentAt: Time; step: number; hasNext: boolean }
+export type AdvanceRequest = { boardId: string; expectedStep: number }
+export type AdvanceResponse = { boardId: string; snapshotVersion: number; replay: Replay }
 
 // ── POST /incidents/{id}/decision, /result ─────────────
 // 두 요청 모두 Idempotency-Key 헤더(동작마다 새 UUID, 같은 요청 재시도 시 같은 키)와 expectedVersion 필수
@@ -265,6 +305,7 @@ export type ErrorCode =
   | 'INCIDENT_NOT_FOUND' | 'REVISION_NOT_FOUND' | 'METRIC_NOT_FOUND'
   | 'WORK_VERSION_CONFLICT' | 'INVALID_TRANSITION' | 'NOT_STARTED' | 'IDEMPOTENCY_KEY_REUSED'
   | 'CURSOR_EXPIRED'
+  | 'REPLAY_STEP_CONFLICT' | 'REPLAY_FINISHED'
   | 'RATE_LIMITED' | 'SERVICE_UNAVAILABLE'
 
 /** 프론트 분기는 code로만 한다 */

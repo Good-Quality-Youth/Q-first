@@ -63,6 +63,10 @@ export interface QualityInfo {
 }
 
 export interface EvidenceStep {
+  /** API 근거 ID (점검 안내의 evidenceIds가 가리키는 값). 가상 데이터에는 없다 */
+  id?: string
+  /** API basis가 compare·derived면 true (Q-First 해석). 없으면 kind로 판단한다 */
+  interpretation?: boolean
   kind: string // 검사 / LOT / 대조 / 센서 / Q-First 이상 징후 / 기존 센서 알람
   /** 그 근거가 생긴 시각 (HH:mm). 없으면 비워 둔다 */
   at?: string
@@ -72,6 +76,28 @@ export interface EvidenceStep {
 
 /** 사출기 도식에서 이상을 표시할 부위 — 대표 센서에서 정함(압력→유압, 배럴 온도→배럴, 스크류 회전→스크류 구동) */
 export type MachineZone = 'hydraulic' | 'barrel' | 'screw' | 'mold'
+
+/**
+ * 확인 항목 (API v1.1 CheckItem → 화면용).
+ * 같은 code로 기본 안내와 조사로 구체화된 안내가 함께 오면 한 줄로 합친다:
+ * label = 구체화된 안내, baseline = 구체화 전 기본 안내.
+ */
+export interface CheckView {
+  code: string
+  label: string
+  baseline: string | null
+  refined: boolean
+  evidenceIds: string[]
+  /** 3D 위치 보기용 기능 구역. 설비 밖 확인이거나 표에 없는 코드면 null */
+  zone: MachineZone | null
+}
+
+/** 에이전트 조사 상태 (API v1.1 Investigation → 화면용) */
+export interface InvestigationView {
+  status: 'running' | 'completed' | 'failed'
+  trigger: '신규 예고' | '기존 비상 알람'
+  label: string
+}
 
 export type IncidentStatus = 'unassigned' | 'assigned' | 'inProgress' | 'rejected' | 'onHold' | 'done'
 

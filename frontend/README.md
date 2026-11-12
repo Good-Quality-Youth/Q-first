@@ -3,7 +3,7 @@
 시설 관리 담당자·품질 담당자가 PC에서 쓰는 Q-First 웹 화면입니다. 지금은 가상 데이터(데이터셋 v7)로 동작하며, 백엔드가 나오면 `src/api/index.ts` 안쪽만 API 호출로 바꿉니다.
 
 - 기능 기준: 노션 「[설계] Q-First 기능명세서 v2」
-- API 기준: Q-First 프론트–백엔드 API v1.0
+- API 기준: Q-First 프론트–백엔드 API v1.0 + v1.1(조사 상태·시연 재생)
 
 ## 실행
 
@@ -13,6 +13,7 @@ npm install
 npm run dev          # 개발 서버
 npm run build        # dist/ 정적 파일
 npm run build:single # dist-single/index.html 한 파일 (미리보기 공유용)
+npm run check:fixtures # 백엔드 fixture 검사 + 장면별 화면 요약 출력 (Node 22.6 이상)
 ```
 
 `index.html?demo`로 열면 14:00에서 시작하고, 왼쪽 아래 「다음 장면 ▶」로 14:05 검사 결과 도착을 재생합니다. 기본은 14:05 상태입니다.
@@ -26,7 +27,9 @@ React 19 · Vite 6 · TypeScript · Tailwind CSS v4 · React Router(HashRouter) 
 
 ```
 src/
-  api/contract.ts     API v1.0 계약 타입 (문서 §3~§5 그대로. 문서가 바뀌면 여기부터 고친다)
+  api/contract.ts     API 계약 타입 v1.0 + v1.1 (문서 그대로. 문서가 바뀌면 여기부터 고친다)
+  api/adapt.ts        계약 → 화면 변환 (시각은 displayTimeZone으로, 확인 항목 코드 → 3D 구역, 근거·조사 상태 라벨)
+  api/fixtures/       백엔드가 준 장면별 응답 예시 (v1.1-demo.json: 13:41 첫 예고, 14:15 조사 중·완료)
   api/types.ts        화면이 쓰는 데이터 형식 (API v1.0으로 옮기는 중)
   api/mock.ts         가상 데이터로 사건·판단·이력을 만드는 곳
   api/demo-data.json  데이터셋 v7에서 뽑은 센서값·품질·지난 이력
@@ -35,6 +38,7 @@ src/
   pages/              Board(대시보드) · DetailModal(판단 근거 상세) · Result(점검 결과 입력) · History(이력)
 scripts/
   build_demo_v61.py   데이터셋 → demo-data.json
+  check-fixtures.ts   fixture가 계약·화면 규칙에 맞는지 검사 (근거 참조, previousGrade, 재생 순서, 시각 오프셋 등)
 ```
 
 ## 데이터
