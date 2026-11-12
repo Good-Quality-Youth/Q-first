@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { getBoard } from '../api'
 import type { Board as BoardData, Incident, NormalEquipment } from '../api/types'
 import { useApp } from '../components/Shell'
@@ -254,7 +253,3 @@ function NormalCard({ n }: { n: NormalEquipment }) {
   )
 }
 
-export function useGoResult() {
-  const nav = useNavigate()
-  return (id: string) => nav(`/incident/${id}/result`)
-}

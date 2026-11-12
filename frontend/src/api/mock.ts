@@ -17,20 +17,13 @@ export const EQUIPMENT: Record<string, Equipment> = Object.fromEntries(
     .map(([n, p]) => { const e = eqp(n, p); return [e.id, e] }),
 )
 
-/** 라인 지도: 부품별 레인 — 부품 하나를 사출기 여러 대가 나눠 만든다 (3·3·4) */
-export const LANES: { label: string; ids: string[] }[] = [
-  { label: '용기 몸체', ids: ['EQP-001', 'EQP-005', 'EQP-006'] },
-  { label: '속뚜껑', ids: ['EQP-002', 'EQP-004', 'EQP-008'] },
-  { label: '뚜껑', ids: ['EQP-003', 'EQP-007', 'EQP-009', 'EQP-010'] },
-]
-
 // ── 신호 ─────────────────────────────────
 type SnapData = { risk?: string; values: number[]; start: string; end: string; outSince: string | null; score: number; topFeature: string; alarm: string | null; errorCode: string; lot: string }
 type Aux = { label: string; reference: number } & Record<Snapshot, number>
 type EqData = { aux?: Aux; kind: string; label: string; unit: string; reference: number; threshold: number | null; limits?: number[]; target: number | null; median: number; band: number[]; snapshots: Record<Snapshot, SnapData> }
 const EQ = DATA.equipment as unknown as Record<string, EqData>
 
-export function makeSignal(id: string, snap: Snapshot, source: SignalSeries['source'] = ''): SignalSeries {
+function makeSignal(id: string, snap: Snapshot, source: SignalSeries['source'] = ''): SignalSeries {
   const e = EQ[id]
   const s = e.snapshots[snap]
   const digits = 1
@@ -42,7 +35,7 @@ export function makeSignal(id: string, snap: Snapshot, source: SignalSeries['sou
     values: s.values.map((v) => +v.toFixed(digits + 1)), startTime: s.start, endTime: s.end, outSince: s.outSince,
   }
 }
-export const scoreOf = (id: string, snap: Snapshot) => EQ[id].snapshots[snap].score
+const scoreOf = (id: string, snap: Snapshot) => EQ[id].snapshots[snap].score
 
 // ── 품질 ─────────────────────────────────
 export const CAUTION = 3 // 주의 기준 % — 이상이면 품질 영향 있음, 미만이면(불량이 있어도) 없음
@@ -82,7 +75,7 @@ const dev = (id: string, snap: Snapshot) => { const d = v(id, snap) - EQ[id].ref
 const pct = (q: QualityInfo) => (q.inspected ? `${f1(((q.defects ?? 0) / q.inspected) * 100)}%` : '')
 const qText = (q: QualityInfo) => (q.inspected ? `${q.defects}/${q.inspected}` : '검사 결과 없음')
 
-export const INCIDENTS: IncDef[] = [
+const INCIDENTS: IncDef[] = [
   {
     id: 'IG-0013', eqp: 'EQP-001', group: 'emergency', appearsAt: '1400', detectedAt: '13:26', alarmAt: '13:33', zones: ['hydraulic', 'barrel'],
     grade: (_s, q) => (q.impact === 'yes' ? 1 : 2),

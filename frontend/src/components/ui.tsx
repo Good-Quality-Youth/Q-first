@@ -2,7 +2,7 @@ import { CAUTION } from '../api/mock'
 import type { ReactNode } from 'react'
 import sprite from '../assets/eqp-sprite.webp'
 import symbol from '../assets/logo-symbol.png'
-import { EQUIPMENT, LANES } from '../api/mock'
+import { EQUIPMENT } from '../api/mock'
 import type { AlertGroup, EquipmentKind, Grade, MachineZone, Operation, QualityInfo, SignalSeries } from '../api/types'
 
 export const cx = (...a: (string | false | null | undefined)[]) => a.filter(Boolean).join(' ')
@@ -17,50 +17,6 @@ export const TONE = {
 const KIND_ICON: Record<EquipmentKind, number> = { injection: 0, tcu: 2, inspection: 6 }
 
 const ZONE_LABEL: Record<MachineZone, string> = { hydraulic: '유압', barrel: '배럴', screw: '스크류 구동', mold: '금형' }
-
-/**
- * 사출기 도식 (옆에서 본 선 그림). 이상 부위만 상태색으로 칠한다 — 사진 대신 "어디를 봐야 하는지"를 보여 준다.
- * 왼쪽부터 형체(금형) · 노즐 · 배럴(히터 밴드) · 호퍼 · 스크류 구동 · 유압(사출 실린더 + 베드 안 유압 장치)
- */
-export function MachineDiagram({ zones = [], group, width = 160, labels = true, dim = false }: { zones?: MachineZone[]; group?: AlertGroup; width?: number; labels?: boolean; dim?: boolean }) {
-  const on = (z: MachineZone) => zones.includes(z)
-  const c = group === 'warning' ? 'var(--color-blue)' : 'var(--color-red)'
-  const bg = group === 'warning' ? 'var(--color-blue-bg)' : 'var(--color-red-bg)'
-  const ink = dim ? 'var(--color-card-bd)' : 'var(--color-mute)'
-  const z = (k: MachineZone) => (on(k) ? { fill: bg, stroke: c, strokeWidth: 2.2 } : { fill: 'var(--color-card)', stroke: ink, strokeWidth: 1.4 })
-  const h = width * 0.5
-  return (
-    <svg width={width} height={h} viewBox="0 0 200 100" role="img" className="shrink-0"
-      aria-label={zones.length ? `사출기 도식 · 이상 부위 ${zones.map((k) => ZONE_LABEL[k]).join('·')}` : '사출기 도식'}>
-      {/* 베드 + 유압 장치 */}
-      <rect x={6} y={74} width={188} height={16} rx={2} fill="var(--color-card)" stroke={ink} strokeWidth={1.4} />
-      <rect x={118} y={77} width={70} height={10} rx={1.5} {...z('hydraulic')} />
-      {/* 형체부: 고정판 · 이동판 · 타이바 · 금형 */}
-      <line x1={14} x2={66} y1={36} y2={36} stroke={ink} strokeWidth={1.4} />
-      <line x1={14} x2={66} y1={66} y2={66} stroke={ink} strokeWidth={1.4} />
-      <rect x={10} y={28} width={8} height={46} rx={1} fill="var(--color-card)" stroke={ink} strokeWidth={1.4} />
-      <rect x={60} y={28} width={8} height={46} rx={1} fill="var(--color-card)" stroke={ink} strokeWidth={1.4} />
-      <rect x={34} y={40} width={26} height={22} rx={1} {...z('mold')} />
-      {/* 노즐 · 배럴 · 히터 밴드 */}
-      <path d="M68 49 L74 47 L74 57 L68 55 Z" fill="var(--color-card)" stroke={ink} strokeWidth={1.4} />
-      <rect x={74} y={45} width={70} height={14} rx={2} {...z('barrel')} />
-      {[80, 94, 108, 122].map((x) => <rect key={x} x={x} y={42} width={7} height={20} rx={1} {...z('barrel')} />)}
-      {/* 호퍼 */}
-      <path d="M126 45 L118 20 L144 20 L136 45 Z" fill="var(--color-card)" stroke={ink} strokeWidth={1.4} strokeLinejoin="round" />
-      {/* 스크류 구동(모터) */}
-      <rect x={144} y={44} width={18} height={16} rx={2} {...z('screw')} />
-      {on('screw') && <path d="M78 52 q4 -4 8 0 t8 0 t8 0 t8 0 t8 0 t8 0 t8 0 t8 0" fill="none" stroke={c} strokeWidth={1.6} />}
-      {/* 사출 실린더(유압) */}
-      <rect x={162} y={42} width={30} height={20} rx={2} {...z('hydraulic')} />
-      <line x1={177} x2={177} y1={62} y2={77} stroke={on('hydraulic') ? c : ink} strokeWidth={on('hydraulic') ? 2.2 : 1.4} />
-      {labels && zones.map((k) => {
-        const pos: Record<MachineZone, [number, number]> = { barrel: [109, 36], hydraulic: [177, 36], screw: [153, 36], mold: [47, 34] }
-        const [x, y] = pos[k]
-        return <text key={k} x={x} y={k === 'screw' && on('hydraulic') ? 12 : y} textAnchor="middle" fontSize={13} fontWeight={800} fill={c}>{ZONE_LABEL[k]}</text>
-      })}
-    </svg>
-  )
-}
 
 /** 사진 위 이상 부위 위치 (스프라이트 사출기 칸 기준 비율 x, y) */
 const ZONE_AT: Record<MachineZone, [number, number]> = { barrel: [0.69, 0.43], screw: [0.86, 0.42], hydraulic: [0.80, 0.58], mold: [0.36, 0.44] }
@@ -161,24 +117,6 @@ export function Pill({ children, dark = false, className }: { children: ReactNod
     <span className={cx('inline-flex items-center rounded-full px-2.5 py-1 text-[12px] font-bold', dark ? 'bg-inv text-inv-fg' : 'bg-soft text-ink', className)}>
       {children}
     </span>
-  )
-}
-
-/** 같은 부품을 만드는 사출기: 이 설비가 몇 대 중 어느 것인지 (LOT를 설비로 이어 붙일 때의 후보) */
-export function LineMap({ focus, group, small = false }: { focus: string; group: AlertGroup; small?: boolean }) {
-  const t = TONE[tone(group)]
-  const lane = LANES.find((l) => l.ids.includes(focus))
-  if (!lane) return null
-  return (
-    <div className={cx('flex flex-wrap items-center gap-1.5', small ? 'text-[12px]' : 'text-[13px]')}>
-      <span className="text-sub"><b className="text-ink">{lane.label}</b> 사출기 {lane.ids.length}대 중</span>
-      {lane.ids.map((id) => (
-        <span key={id}
-          className={cx('num rounded border px-1.5 py-0.5', id === focus ? cx('border-2 font-bold', t.bd, t.bg, t.tx) : 'border-line text-mute')}>
-          {id.replace('EQP-', '')}
-        </span>
-      ))}
-    </div>
   )
 }
 
