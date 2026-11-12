@@ -92,6 +92,9 @@ export interface Incident {
   quality: QualityInfo
   evidence: EvidenceStep[]
   checklist: string[]
+  /** 확인 항목별 설비 위치 (checklist와 같은 순서). 설비 밖 확인(LOT 검사 등)은 null.
+   *  API v1.0은 확인 항목을 코드로 주므로, 연결 시 코드 → 구역 표를 프론트에 둔다 */
+  checklistZones: (MachineZone | null)[]
   operation: Operation
   zones: MachineZone[] // 도식에서 칠할 이상 부위
 }

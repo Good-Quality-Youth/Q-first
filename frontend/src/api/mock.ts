@@ -68,6 +68,7 @@ type IncDef = {
   qualitySource: string
   evidence: (snap: Snapshot, q: QualityInfo) => EvidenceStep[]
   checklist: string[]
+  checkZones: (MachineZone | null)[] // 확인 항목별 설비 위치
   detectedAt: string
   alarmAt: string | null // 첫 기존 센서 알람(error_code) 시각 → 이상감지 시작
   zones: MachineZone[] // 도식에서 칠할 부위
@@ -95,6 +96,7 @@ export const INCIDENTS: IncDef[] = [
       { kind: '검사', at: q.inspected ? '13:58' : undefined, title: `몸체 LOT 치수불량 ${qText(q)}`, detail: q.inspected ? `13:50부터 검수 · ${pct(q)} · 주의 기준 ${CAUTION}% 넘음` : '' },
     ],
     checklist: ['사출 압력·유압 회로 확인', '배럴 히터 밴드·열전대 확인', '같은 몸체 LOT 치수 추가 확인'],
+    checkZones: ['hydraulic', 'barrel', null],
     status: 'assigned', assignee: 'OP-006',
   },
   {
@@ -108,6 +110,7 @@ export const INCIDENTS: IncDef[] = [
       { kind: '검사', title: '속뚜껑 LOT', detail: '품질 영향 미확인 · 검사 결과 없음' },
     ],
     checklist: ['사출 압력·유압 회로 확인', '노즐 막힘 여부 확인', '속뚜껑 LOT 검사 결과 입력 확인'],
+    checkZones: ['hydraulic', 'barrel', null], // 노즐은 배럴 끝
     status: 'unassigned', assignee: null,
   },
   {
@@ -121,6 +124,7 @@ export const INCIDENTS: IncDef[] = [
       { kind: '검사', title: '속뚜껑 LOT', detail: '품질 영향 미확인 · 검사 결과 없음' },
     ],
     checklist: ['스크류 구동 모터·벨트 확인', '호퍼 원료 공급 상태 확인', '속뚜껑 LOT 검사 결과 입력 확인'],
+    checkZones: ['screw', null, null], // 호퍼는 표시 구역이 없어 위치를 짚지 않는다
     status: 'unassigned', assignee: null,
   },
   {
@@ -142,6 +146,7 @@ export const INCIDENTS: IncDef[] = [
         : [sig, { kind: '검사', title: `뚜껑 LOT ${qText(q)}`, detail: '아직 불량 없음' }]
     },
     checklist: ['배럴 히터 밴드·온도 제어 확인', '열전대(온도 센서) 값 확인', '같은 뚜껑 LOT 외관 추가 검사'],
+    checkZones: ['barrel', 'barrel', null],
     status: 'unassigned', assignee: null,
   },
 ]
@@ -162,7 +167,7 @@ export function buildIncidents(snap: Snapshot): Incident[] {
       title: d.title(snap), headline: d.headline(snap), whyFirst: d.why(snap), detectedAt: d.detectedAt, status: d.status, assignee: d.assignee,
       operation: d.alarmAt ? { status: 'alarm', since: d.alarmAt } : { status: 'running', since: null },
       signal: { ...makeSignal(d.eqp, snap, d.group === 'emergency' ? '기존 센서 알람' : 'Q-First 이상 징후'), mark: d.alarmAt ? { at: d.alarmAt, label: '기존 알람' } : { at: d.detectedAt, label: '예고 등재 · 알람 전' } },
-      quality: q, evidence: d.evidence(snap, q), checklist: d.checklist, zones: d.zones,
+      quality: q, evidence: d.evidence(snap, q), checklist: d.checklist, checklistZones: d.checkZones, zones: d.zones,
     } satisfies Incident
   })
   // 같은 목록 안 정렬: 등급 → 품질 영향 크기 → 이상 점수 → 설비 ID (v4 README 규칙)

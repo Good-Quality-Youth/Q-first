@@ -15,6 +15,7 @@ export function DetailModal({ id, onClose }: { id: string; onClose: () => void }
   const inc = useLoad(() => getIncident(id, snap), [id])
   const nav = useNavigate()
   const [ck, setCk] = useState<Record<number, boolean>>({})
+  const [spot, setSpot] = useState<number | null>(null) // 위치를 보고 있는 확인 항목
   const ref = useRef<HTMLDivElement>(null)
   useEffect(() => {
     const f = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
@@ -34,7 +35,7 @@ export function DetailModal({ id, onClose }: { id: string; onClose: () => void }
         <div className="flex items-start gap-4">
           <span className="num text-[52px] font-semibold leading-none">{inc.rank}</span>
           <Suspense fallback={<MachineFigure id={inc.equipment.id} zones={inc.zones} group={inc.group} size={150} />}>
-            <Machine3D zones={inc.zones} group={inc.group} width={380} height={220} fallback={<MachineFigure id={inc.equipment.id} zones={inc.zones} group={inc.group} size={150} />} />
+            <Machine3D zones={inc.zones} group={inc.group} focus={spot !== null ? inc.checklistZones[spot] : null} width={380} height={220} fallback={<MachineFigure id={inc.equipment.id} zones={inc.zones} group={inc.group} size={150} />} />
           </Suspense>
           <div className="flex flex-col">
             <h2 className="text-[30px] font-bold leading-tight">{inc.equipment.no}</h2>
@@ -92,13 +93,25 @@ export function DetailModal({ id, onClose }: { id: string; onClose: () => void }
           </div>
           <section className="flex flex-col gap-2">
             <h4 className="text-[15px] font-extrabold">확인할 것</h4>
-            {inc.checklist.map((c, i) => (
-              <label key={i} className="btn-line flex cursor-pointer items-center gap-3 rounded-lg border border-card-bd px-4 py-3 text-[15px] font-semibold">
-                <input type="checkbox" checked={!!ck[i]} onChange={() => setCk({ ...ck, [i]: !ck[i] })} className="h-5 w-5 accent-ink" />
-                {c}
-              </label>
-            ))}
-            <p className="text-[12px] text-mute">원인을 확정하지 않아요. 이상이 나타난 곳과 확인 순서까지만 안내해요.</p>
+            {inc.checklist.map((c, i) => {
+              const z = inc.checklistZones[i]
+              const on = spot === i
+              return (
+                <div key={i} className={cx('flex items-stretch overflow-hidden rounded-lg border', on ? 'border-ink' : 'border-card-bd')}>
+                  <label className="btn-line flex flex-1 cursor-pointer items-center gap-3 px-4 py-3 text-[15px] font-semibold">
+                    <input type="checkbox" checked={!!ck[i]} onChange={() => setCk({ ...ck, [i]: !ck[i] })} className="h-5 w-5 accent-ink" />
+                    {c}
+                  </label>
+                  {z && (
+                    <button type="button" aria-pressed={on} onClick={() => setSpot(on ? null : i)}
+                      className={cx('shrink-0 border-l px-3 text-[13px] font-bold', on ? 'border-ink bg-inv text-inv-fg btn-solid' : 'btn-line border-card-bd text-sub')}>
+                      {on ? '위치 보는 중' : '위치 보기'}
+                    </button>
+                  )}
+                </div>
+              )
+            })}
+            <p className="text-[12px] text-mute">「위치 보기」를 누르면 위 3D에서 그 부분을 보여 줘요. 원인을 확정하지 않고, 이상이 나타난 곳과 확인 순서까지만 안내해요.</p>
           </section>
         </div>
 
