@@ -198,4 +198,17 @@ export interface HistoryRecord {
   memo: string
   reason?: string
   revisions: Revision[]
+  /** 조치 기록 (FR-04): 등재 → 착수 → 결과(또는 반려·보류). 시각을 모르면 at 없음 */
+  log: { at?: string; kind: 'listed' | 'start' | 'reject' | 'hold' | 'result'; text: string }[]
+}
+
+/** 화면 내 알림 (FR-03, API v1.1 notifications). 장면이 바뀌며 판단이 달라진 사건마다 1건 */
+export interface Notice {
+  id: string
+  at: string // HH:mm
+  incidentId: string
+  /** emergency 빨강(기존 비상 알람) · warning 파랑(예고) · ink 검정(Q-First 조사 완료) */
+  tone: 'emergency' | 'warning' | 'ink'
+  title: string
+  detail: string
 }

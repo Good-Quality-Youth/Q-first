@@ -21,27 +21,35 @@ const ZONE_LABEL: Record<MachineZone, string> = { hydraulic: '유압', barrel: '
 /** 사진 위 이상 부위 위치 (스프라이트 사출기 칸 기준 비율 x, y) */
 const ZONE_AT: Record<MachineZone, [number, number]> = { barrel: [0.69, 0.43], screw: [0.86, 0.42], hydraulic: [0.80, 0.58], mold: [0.36, 0.44] }
 
-/** 사출기 사진 + 이상 부위 점 + 아래 부위 이름. 사진은 그대로 두고 "어디를 봐야 하는지"만 얹는다 */
+/** 사출기 사진 + 이상 부위 캡슐(상세 3D 핀과 같은 말). 사진은 그대로 두고 "어디를 봐야 하는지"만 얹는다.
+ *  사진 아래쪽 부위(유압)는 캡슐을 점 아래에, 위쪽 부위는 점 위에 달아 서로 겹치지 않게 한다 */
 export function MachineFigure({ id, zones, group, size = 128, compact = false }: { id: string; zones: MachineZone[]; group: AlertGroup; size?: number; compact?: boolean }) {
   const t = TONE[tone(group)]
+  const stem = compact ? 8 : 12
   return (
-    <div className="flex shrink-0 flex-col items-center gap-1">
+    <div className="flex shrink-0 flex-col items-center gap-1" aria-label={zones.length ? `이상 부위 ${zones.map((k) => ZONE_LABEL[k]).join(' · ')}` : undefined}>
       <span className="relative inline-block">
         <EqpIcon id={id} size={size} />
         {zones.map((k) => {
-          const [fx, fy] = ZONE_AT[k]
-          const d = compact ? 12 : 16
+          const [fx, fy0] = ZONE_AT[k]
+          const fy = fy0 - 0.09
+          const below = fy0 >= 0.5
+          const x = fx * size
+          const y = fy * size
+          // 오른쪽 끝 부위는 캡슐을 왼쪽으로 붙여 사진 밖으로 나가지 않게
+          const shift = fx > 0.82 ? '-85%' : '-50%'
           return (
-            <span key={k} aria-hidden="true" className="absolute rounded-full border-2 border-white"
-              style={{ left: fx * size - d / 2, top: (fy - 0.09) * size - d / 2, width: d, height: d, background: t.line, boxShadow: `0 0 0 3px ${t.line}40` }} />
+            <span key={k} aria-hidden="true">
+              <span className="absolute h-2 w-2 rounded-full border border-white" style={{ left: x - 4, top: y - 4, background: t.line }} />
+              <span className="absolute w-0.5" style={{ left: x - 1, top: below ? y : y - stem, height: stem, background: t.line }} />
+              <span className={cx('absolute whitespace-nowrap rounded-full border-2 bg-card font-bold leading-none', compact ? 'px-1.5 py-0.5 text-[10px]' : 'px-2 py-1 text-[12px]', t.tx)}
+                style={{ left: x, top: below ? y + stem : y - stem, borderColor: t.line, transform: `translate(${shift}, ${below ? '0' : '-100%'})` }}>
+                {ZONE_LABEL[k]}
+              </span>
+            </span>
           )
         })}
       </span>
-      {zones.length > 0 && (
-        <span className={cx('font-bold', compact ? 'text-[12px]' : 'text-[13px]', t.tx)}>
-          {compact ? '' : '이상 부위 '}{zones.map((k) => ZONE_LABEL[k]).join(' · ')}
-        </span>
-      )}
     </div>
   )
 }

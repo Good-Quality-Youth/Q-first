@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { getBoard } from '../api'
 import type { Board as BoardData, Incident, NormalEquipment, Snapshot } from '../api/types'
 import { useApp } from '../components/Shell'
@@ -13,9 +13,11 @@ const STATUS: Record<Incident['status'], string> = {
 }
 
 export default function Board() {
-  const { snap, news, dismissNews } = useApp()
+  const { snap, news, dismissNews, focusId, setFocusId } = useApp()
   const data = useLoad(() => getBoard(snap))
   const [open, setOpen] = useState<string | null>(null)
+  // 헤더 알림에서 고른 사건 상세 열기
+  useEffect(() => { if (focusId) { setOpen(focusId); setFocusId(null) } }, [focusId, setFocusId])
   if (!data) return <p className="p-6 text-mute">불러오는 중…</p>
   const notice = news ? noticeOf(data, snap) : null
   return (
@@ -180,9 +182,9 @@ function BigCard({ inc, onOpen, flash = false, asOf }: { inc: Incident; onOpen: 
         <div className="flex items-center gap-3">
           <AiTag dark />
           <span className="whitespace-nowrap text-[20px] font-bold leading-tight">{inc.group === 'emergency' ? '비상' : '예고'} <span className="num text-[26px]">{inc.rank}</span>위 · {inc.grade}등급</span>
-          {inc.previousGrade && <span className="ml-auto shrink-0 rounded-md border border-inv-fg/70 px-2 py-0.5 text-[13px] font-bold">{inc.previousGroup ? '예고 ' : ''}{inc.previousGrade}등급 → {inc.grade}등급</span>}
+          {inc.previousGrade && <span className="ml-auto shrink-0 rounded-md border border-inv-fg px-2 py-0.5 text-[13px] font-bold">{inc.previousGroup ? '예고 ' : ''}{inc.previousGrade}등급 → {inc.grade}등급</span>}
         </div>
-        <span className="text-[15px] leading-snug opacity-95">{inc.whyFirst}</span>
+        <span className="text-[15px] leading-snug">{inc.whyFirst}</span>
       </div>
       <div className="flex items-start gap-4 px-5">
         <MachineFigure id={inc.equipment.id} zones={inc.zones} group={inc.group} size={150} />
@@ -200,7 +202,7 @@ function BigCard({ inc, onOpen, flash = false, asOf }: { inc: Incident; onOpen: 
           <>
             <span className="inline-flex items-center gap-2 rounded-md bg-inv px-3 py-1.5 text-[15px] font-bold text-inv-fg">
               <HalfDot size={13} /> 점검중 <span className="num font-semibold">{inc.operation.since}~</span>
-              <span className="font-normal opacity-85">· {inc.assignee ? `담당 ${inc.assignee} · ` : ''}<span className="num">{mins(inc.operation.since!, asOf)}</span>분째</span>
+              <span className="font-normal">· {inc.assignee ? `담당 ${inc.assignee} · ` : ''}<span className="num">{mins(inc.operation.since!, asOf)}</span>분째</span>
             </span>
             <span className="text-[12px] text-sub">같은 이상으로 새 알림 안 보냄</span>
           </>
@@ -239,7 +241,7 @@ function RowCard({ inc, onOpen, flash = false }: { inc: Incident; onOpen: () => 
         <AiTag dark label="판단" />
         <span className="text-[15px] font-bold"><span className="num text-[30px] leading-none">{inc.rank}</span>위</span>
         <span className="text-[14px] font-bold">{inc.grade}등급</span>
-        {inc.previousGrade && <span className="rounded border border-inv-fg/70 px-1 text-[11px] font-bold">{inc.previousGroup ? '예고 ' : ''}{inc.previousGrade} → {inc.grade}</span>}
+        {inc.previousGrade && <span className="rounded border border-inv-fg px-1 text-[11px] font-bold">{inc.previousGroup ? '예고 ' : ''}{inc.previousGrade} → {inc.grade}</span>}
       </div>
       <div className="flex items-center"><MachineFigure id={inc.equipment.id} zones={inc.zones} group={inc.group} size={96} compact /></div>
       <div className="flex min-w-0 flex-1 flex-col justify-center gap-1 py-3">

@@ -1,9 +1,9 @@
 // 화면이 부르는 함수는 이 파일에만 있다.
 // 지금은 가상 데이터(mock.ts)를 메모리에서 돌려주고, 백엔드 API가 나오면 각 함수 안쪽만 fetch로 바꾼다.
 // 예) getBoard → GET /api/board?snapshot=1405
-import { DEMO_DATE, PAST_HISTORY, REVISIONS, atOrAfter, buildIncidents, buildNormal, normalIds, sceneOf } from './mock'
+import { DEMO_DATE, PAST_HISTORY, REVISIONS, SCENES, atOrAfter, buildIncidents, buildNormal, normalIds, sceneOf } from './mock'
 import type {
-  Board, DecisionInput, HistoryRecord, Incident, ResultInput, Snapshot,
+  Board, DecisionInput, HistoryRecord, Incident, Notice, ResultInput, Snapshot,
 } from './types'
 
 const wait = (ms = 120) => new Promise((r) => setTimeout(r, ms))
@@ -107,12 +107,26 @@ export function getSaved(id: string): Saved | undefined {
   return store[id]
 }
 
+const DECISION_TEXT = { start: '점검 착수', reject: '반려', hold: '보류' } as const
+/** 조치 기록: 등재 시각 → 착수·반려·보류 → 결과 입력 (요구사항 FR-04 착수·결과 기록) */
+function logOf(inc: Incident, s: Saved | undefined, status: HistoryRecord['status'], first?: string): HistoryRecord['log'] {
+  // 처음 등재된 목록 기준 (1호기는 13:26 예고로 시작해 13:33 알람으로 비상이 됐다)
+  const warnFirst = first ? first.startsWith('예고') : inc.group === 'warning'
+  const log: HistoryRecord['log'] = [{ at: inc.detectedAt, kind: 'listed', text: `${warnFirst ? 'Q-First 예고' : '기존 비상 알람'} 등재` }]
+  const d = s?.decision
+  if (d) log.push({ at: d.at, kind: d.type, text: `${DECISION_TEXT[d.type]}${d.type === 'start' ? ` · ${inc.assignee ?? 'OP-001'}` : d.reason ? ` · ${d.reason}` : ''}` })
+  if (s?.result) log.push({ at: s.result.at, kind: 'result', text: `결과 입력 · ${status} · ${s.result.minutes}분` })
+  return log
+}
+
 const OUTCOME_LABEL = { found: '이상 발견', notFound: '이상 없음', unclear: '판단 어려움' } as const
 
 export async function getHistory(snapshot: Snapshot): Promise<HistoryRecord[]> {
   await wait()
   const today: HistoryRecord[] = incidents(snapshot).map((inc) => {
-    const s = store[inc.id]
+    // 시드 착수(13:58)는 그 시각 이후 장면에서만 기록에 보인다 (현황판과 같은 규칙)
+    const raw = store[inc.id]
+    const s = raw && raw === seeded[inc.id] && !atOrAfter(snapshot, SEED_FROM) ? undefined : raw
     const status: HistoryRecord['status'] = s?.result ? OUTCOME_LABEL[s.result.outcome]
       : s?.decision?.type === 'reject' ? '반려' : s?.decision?.type === 'hold' ? '보류' : '진행 중'
     const revs = (REVISIONS[inc.id] ?? []).filter((r) => atOrAfter(snapshot, r.snap))
@@ -122,7 +136,41 @@ export async function getHistory(snapshot: Snapshot): Promise<HistoryRecord[]> {
       gradeChanged: !!inc.previousGrade, status, minutes: s?.result?.minutes ?? null,
       assignee: inc.assignee ?? (s?.decision?.type === 'start' ? 'OP-001' : null),
       actions: s?.result?.actions ?? [], memo: s?.result?.memo ?? '', reason: s?.decision?.reason, revisions: revs,
+      log: logOf(inc, s, status, (REVISIONS[inc.id] ?? [])[0]?.label),
     }
   })
   return [...today.sort((a, b) => b.time.localeCompare(a.time)), ...PAST_HISTORY]
+}
+
+/**
+ * 화면 내 알림 (FR-03). 지금 장면까지 각 장면에서 판단이 바뀐 사건을 모은다(최근 것이 위).
+ * 새로 등재(기존 비상 알람·Q-First 예고) · 예고 → 비상 이동 · 등급 변경 · Q-First 조사 완료
+ */
+export async function getNotifications(snapshot: Snapshot): Promise<Notice[]> {
+  await wait(40)
+  const out: Notice[] = []
+  let prev: Incident[] = []
+  for (const sc of SCENES) {
+    if (!atOrAfter(snapshot, sc.id)) break
+    const cur = buildIncidents(sc.id)
+    for (const x of cur) {
+      const p = prev.find((i) => i.id === x.id)
+      const no = x.equipment.no
+      const add = (tone: Notice['tone'], title: string, detail: string) => out.push({ id: `${sc.id}-${x.id}-${out.length}`, at: sc.time, incidentId: x.id, tone, title, detail })
+      if (!p) {
+        if (x.group === 'emergency') add('emergency', `${no} 기존 비상 알람`, `비상 ${x.rank}위 · ${x.grade}등급 · ${x.headline}`)
+        else add('warning', `${no} Q-First 예고 등재`, `예고 ${x.rank}위 · ${x.grade}등급 · ${x.headline}`)
+      } else if (p.group !== x.group && x.group === 'emergency') {
+        add('emergency', `${no} 기존 비상 알람`, `예고 ${p.grade}등급 → 비상 ${x.rank}위 · ${x.grade}등급`)
+      } else if (p.grade !== x.grade) {
+        add(x.group, `${no} 등급 변경`, `${x.quality.source} 검사 결과 반영 · ${p.grade}등급 → ${x.grade}등급`)
+      }
+      const refined = x.checks.filter((c) => c.refined)
+      if (p?.investigation?.status === 'running' && x.investigation?.status === 'completed' && refined.length) {
+        add('ink', `${no} Q-First 조사 완료`, `순위·등급은 그대로 · 확인 항목을 근거 ${Math.max(...refined.map((c) => c.evidenceIds.length))}건으로 구체화`)
+      }
+    }
+    prev = cur
+  }
+  return out.reverse()
 }

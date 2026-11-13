@@ -87,7 +87,7 @@ export default function History() {
               <h3 className="text-[15px] font-extrabold">판단 이력</h3>
               {cur.revisions.map((r, i) => (
                 <div key={r.rev} className="flex gap-3">
-                  <span className={cx('grid h-7 w-7 shrink-0 place-items-center rounded-full text-[12px] font-bold', i === cur.revisions.length - 1 ? 'bg-inv text-inv-fg' : 'border border-card-bd')}>{r.rev}</span>
+                  <span title={`${i + 1}번째 판단 (판정 버전 ${r.rev})`} className={cx('grid h-7 shrink-0 place-items-center rounded-full px-2 text-[12px] font-bold', i === cur.revisions.length - 1 ? 'bg-inv text-inv-fg' : 'border border-card-bd')}>{i + 1}차</span>
                   <div className="flex flex-col gap-1">
                     <p className="text-[14px] font-bold"><span className="num">{r.at}</span> · {r.label}</p>
                     <p className="text-[13px] text-sub">{r.detail}</p>
@@ -97,6 +97,20 @@ export default function History() {
               ))}
             </section>
             <p className="-mt-2 text-[12px] text-mute">각 판단은 그 시각까지 도착한 데이터만으로 만들어요. 나중에 온 검사 결과로 지난 판단을 고치지 않아요.</p>
+            <section className="flex flex-col gap-2" aria-label="조치 기록">
+              <h3 className="text-[15px] font-extrabold">조치 기록</h3>
+              <ol className="flex flex-col">
+                {cur.log.map((l, i) => (
+                  <li key={i} className="relative flex gap-3 pb-3 last:pb-0">
+                    {i < cur.log.length - 1 && <span aria-hidden="true" className="absolute left-[5px] top-3 h-full w-px bg-line" />}
+                    <span aria-hidden="true" className={cx('relative mt-1.5 h-[11px] w-[11px] shrink-0 rounded-full border-2', l.kind === 'result' ? 'border-ink bg-ink' : l.kind === 'listed' ? 'border-card-bd bg-card' : 'border-ink bg-card')} />
+                    <span className="num w-11 shrink-0 text-[13px] text-sub">{l.at ?? '—'}</span>
+                    <span className={cx('text-[14px]', l.kind === 'listed' ? 'text-sub' : 'font-bold')}>{l.text}</span>
+                  </li>
+                ))}
+                {cur.status === '진행 중' && <li className="flex gap-3 pt-1 text-[13px] text-mute"><span className="w-[11px]" /><span className="w-11" />{cur.log.length > 1 ? '결과 입력 전' : '아직 착수 전'}</li>}
+              </ol>
+            </section>
             {(cur.status !== '진행 중' || cur.actions.length > 0) && (
               <dl className="grid grid-cols-[110px_1fr] gap-y-2 rounded-lg bg-soft p-4 text-[13px]">
                 <dt className="text-sub">점검 결과</dt><dd className={cx('text-right font-bold', RESULT_TX[cur.status])}>{cur.status}{cur.reason ? ` · ${cur.reason}` : ''}</dd>

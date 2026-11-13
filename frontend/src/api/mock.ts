@@ -282,6 +282,11 @@ export const PAST_HISTORY: HistoryRecord[] = DATA.pastHistory.map((h) => ({
   group: h.group as AlertGroup, rank: 1, grade: h.grade as Grade, gradeChanged: h.grade !== h.initialGrade,
   status: h.result as HistoryRecord['status'], minutes: h.minutes, assignee: h.assignee,
   actions: [h.action], memo: '',
+  log: [
+    { at: h.time, kind: 'listed' as const, text: `${h.group === 'emergency' ? '기존 비상 알람' : 'Q-First 예고'} 등재 · ${h.initialGrade}등급` },
+    ...(h.assignee ? [{ kind: 'start' as const, text: `점검 착수 · ${h.assignee}` }] : []),
+    { kind: 'result' as const, text: `결과 입력 · ${h.result}${h.minutes ? ` · ${h.minutes}분` : ''}` },
+  ],
   revisions: [
     { rev: 'r1', at: h.time, label: `${h.group === 'emergency' ? '비상' : '예고'} · ${h.initialGrade}등급`, detail: `${h.title} · 처음 판단`, basis: ['센서 1'] },
     ...(h.grade !== h.initialGrade ? [{ rev: 'r2', at: h.gradeAt, label: `${h.initialGrade}등급 → ${h.grade}등급`, detail: h.quality === 'DEFECT' || h.quality === 'CAUTION' ? `품질 영향 있음 · 불량 ${(Number(h.qualityRate) * 100).toFixed(1)}% (${h.qualityN}개 검수)` : '판단 갱신', basis: ['센서 1', '검사 1'] }] : []),
