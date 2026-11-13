@@ -102,10 +102,11 @@ const OP = {
 export function OpChip({ op, small = false }: { op: Operation; small?: boolean }) {
   const o = OP[op.status]
   return (
-    <span title="설비 가동 상태 (알람·점검 이력에서 규칙으로 계산)"
+    <span title={op.status === 'inspecting' ? '담당자가 확인 중인 상태예요. 이 시간에도 센서값은 1분마다 들어와요.' : '설비 가동 상태 (알람·점검 이력에서 규칙으로 계산)'}
       className={cx('inline-flex items-center gap-1 whitespace-nowrap rounded border font-bold', small ? 'px-1.5 py-0.5 text-[12px]' : 'px-2 py-1 text-[13px]', o.cls)}>
       {op.status === 'inspecting' ? <HalfDot /> : <span aria-hidden="true" className={o.markCls}>{o.mark}</span>}
       <span className="sr-only">설비 상태 </span>{o.t}{op.since && <span className="num font-semibold opacity-80"> {op.since}~</span>}
+      {op.status === 'inspecting' && <span className="font-normal"> · 센서 수신 중</span>}
     </span>
   )
 }

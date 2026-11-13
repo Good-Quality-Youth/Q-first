@@ -74,12 +74,15 @@ function noticeOf(d: BoardData, snap: Snapshot): { inc: Incident; text: ReactNod
   return { inc: x, box: cls, text: <>{x.quality.source} 검사 결과가 들어와 판단이 바뀌었어요 · <b className={tx}>{x.equipment.no} {em ? '비상' : '예고'} {x.previousGrade}등급 → {x.grade}등급</b> (품질 영향 {x.quality.impact === 'yes' ? '있음' : '없음'})</> }
 }
 
+/** 점검중은 사람이 확인 중이라는 뜻. 가동·정지는 데이터에 없으니 단정하지 않고, 센서가 계속 들어온다는 사실만 쓴다 */
+const INSP_TIP = '담당자가 확인 중인 상태예요. 이 시간에도 센서값은 1분마다 들어와요.'
+
 const mins = (a: string, b: string) => { const [ah, am] = a.split(':').map(Number); const [bh, bm] = b.split(':').map(Number); return bh * 60 + bm - (ah * 60 + am) }
 
 const STATE_LABEL: Record<Incident['status'], string> = { unassigned: '착수 전', assigned: '착수 전', inProgress: '점검 중', rejected: '반려', onHold: '보류', done: '완료' }
-const lotNo = (lot?: string) => lot ?? ''
 
-/** Q-First 판단 띠 (실제 운영 화면): 지금 먼저 할 일 · 다음 순서 · 품질 영향 범위(LOT). 아래 세 목록과 같은 12열(5·4·3) */
+/** Q-First 판단 띠: "지금 먼저 할 1건"만 크게. 이유는 줄글 대신 칩, 확인은 첫 항목 하나, 다음 순서는 설비 이름만.
+ *  품질 영향(LOT)·순위별 상세는 아래 카드에 이미 있으니 띠에서는 뺀다 */
 function StatusBand({ d, onOpen }: { d: BoardData; onOpen: (id: string) => void }) {
   const s = d.summary
   const order = [...d.emergency, ...d.warning]
@@ -88,73 +91,59 @@ function StatusBand({ d, onOpen }: { d: BoardData; onOpen: (id: string) => void 
   const working = order.filter((x) => x.status === 'inProgress')
   const first = open[0]
   const next = open.slice(1, 4)
-  const qRank = (x: Incident) => (x.quality.impact === 'yes' ? 0 : x.quality.impact === null ? 1 : 2)
-  const lots = order.filter((x) => x.quality.lot).sort((a, b) => qRank(a) - qRank(b))
+  const reasons = first ? first.whyFirst.split(/ · | \+ /).map((r) => r.trim()).filter(Boolean) : []
+  const check = first?.checks[0]
   return (
     <section aria-label="Q-First 판단 요약" className="ai-surface overflow-hidden rounded-xl text-band-fg">
-      <div className="flex items-center gap-3 border-b border-band-line px-5 py-3">
+      <div className="flex items-center gap-3 border-b border-band-line px-5 py-2.5 text-[15px]">
         <AiTag dark />
-        <span className="text-[16px] text-band-mute">설비 이상 징후 × 검사 결과(LOT)로 점검 순서를 정했어요 · <b className="num text-band-fg">{d.asOf}</b> 기준</span>
-        <span className="ml-auto flex items-center gap-3 text-[15px] text-band-mute">
+        <span className="text-band-mute"><b className="num text-band-fg">{d.asOf}</b> 기준 점검 순서</span>
+        <span className="ml-auto flex items-center gap-4 text-band-mute">
           {working.map((x) => (
-            <span key={x.id} className="rounded border border-band-line px-2 py-0.5">
-              <HalfDot /> 점검 중 <b className="text-band-fg">{x.equipment.no}</b> <span className="num">{x.operation.since}~</span>{x.assignee ? ` · ${x.assignee}` : ''}
-            </span>
+            <span key={x.id}><HalfDot /> <b className="text-band-fg">{x.equipment.no}</b> 점검 중</span>
           ))}
-          <span>이상 <b className="num text-band-fg">{s.emergency + s.warning}</b>건 <span className="num">(비상 {s.emergency} · 예고 {s.warning})</span> · 품질 연관 <b className="num text-band-fg">{s.qualityLinked.length}</b>건</span>
-          <span className="border-l border-band-line pl-3">조치 <b className="num text-band-fg">{s.handled.started}/{s.handled.total}</b> · 착수 {s.handled.started} · 보류 {s.handled.onHold} · 반려 {s.handled.rejected}</span>
+          <span>비상 <b className="num text-band-fg">{s.emergency}</b> · 예고 <b className="num text-band-fg">{s.warning}</b></span>
+          <span>품질 연관 <b className="num text-amber">{s.qualityLinked.length}</b></span>
+          <span>조치 <b className="num text-band-fg">{s.handled.started}/{s.handled.total}</b></span>
         </span>
       </div>
-      <div className="grid grid-cols-12 gap-4">
-        {!first && <div className="col-span-5 px-5 py-4 text-[14px] text-band-mute">착수 전인 설비가 없어요</div>}
-        {first && (
-          <div className="col-span-5 flex items-center gap-4 px-5 py-4">
-            <div className="flex flex-col">
-              <span className="text-[15px] font-bold text-band-mute">지금 먼저 <span className="font-normal">· 착수 전 1순위</span></span>
-              <span className="text-[48px] font-bold leading-tight">{first.equipment.no}</span>
-              <span className="text-[15px] text-band-mute">{first.equipment.name}</span>
-            </div>
-            <div className="flex min-w-0 flex-1 flex-col gap-1 border-l border-band-line pl-4">
-              <span className="text-[22px] font-bold leading-tight">{first.group === 'emergency' ? '비상' : '예고'} {first.rank}위 · {first.grade}등급</span>
-              <span className="text-[17px] leading-snug">{first.whyFirst}</span>
-              <span className="text-[17px] leading-snug"><span className="text-band-mute">먼저 확인</span> <b>{first.checks[0]?.label}</b></span>
-              <span className="text-[15px] text-band-mute">{STATE_LABEL[first.status]}</span>
-            </div>
-            <button onClick={() => onOpen(first.id)} className="btn-light shrink-0 rounded-lg bg-card px-4 py-2.5 text-[16px] font-bold text-ink">근거 ›</button>
+      {!first && <div className="px-5 py-5 text-[16px] text-band-mute">착수 전인 설비가 없어요</div>}
+      {first && (
+        <div className="flex items-center gap-6 px-5 py-4">
+          <div className="flex shrink-0 flex-col">
+            <span className="text-[14px] font-bold text-band-mute">지금 먼저</span>
+            <span className="text-[46px] font-bold leading-none">{first.equipment.no}</span>
+            <span className="mt-1 text-[14px] text-band-mute">{first.equipment.name}</span>
           </div>
-        )}
-        <div className="col-span-4 flex flex-col justify-center gap-2 border-l border-band-line px-5 py-4">
-          <span className="text-[15px] font-bold text-band-mute">다음 순서</span>
-          {next.map((x) => {
-            return (
-              <button key={x.id} onClick={() => onOpen(x.id)} className="btn-on-dark -mx-2 flex items-center gap-2 rounded-md px-2 py-0.5 text-left text-[17px]">
-                <span className={cx('h-2.5 w-2.5 shrink-0', x.group === 'emergency' ? 'rounded-full bg-red' : 'bg-blue')} />
-                <span className="w-[72px] shrink-0 text-band-mute">{x.group === 'emergency' ? '비상' : '예고'} {x.rank}위</span>
-                <b className="shrink-0">{x.equipment.no}</b>
-                <span className="min-w-0 flex-1 truncate text-band-mute">
-                  {x.headline}
-                </span>
-                <span className="shrink-0 text-[15px] text-band-mute">{STATE_LABEL[x.status]}</span>
-              </button>
-            )
-          })}
-          {!next.length && <span className="text-[16px] text-band-mute">다음 대기 중인 설비가 없어요</span>}
+          <dl className="grid min-w-0 flex-1 grid-cols-[72px_1fr] items-center gap-x-3 gap-y-2.5 border-l border-band-line pl-6">
+            <dt className="text-[14px] text-band-mute">판단</dt>
+            <dd className="flex flex-wrap items-center gap-1.5">
+              <span className="mr-1 text-[20px] font-bold">{first.group === 'emergency' ? '비상' : '예고'} {first.rank}위 · {first.grade}등급</span>
+              {reasons.map((r) => (
+                <span key={r} className="rounded-full border border-band-line px-2.5 py-0.5 text-[14px] font-semibold">{r}</span>
+              ))}
+            </dd>
+            <dt className="text-[14px] text-band-mute">먼저 확인</dt>
+            <dd className="flex min-w-0 items-center gap-2 text-[17px] font-bold">
+              <span className="num grid h-6 w-6 shrink-0 place-items-center rounded-full bg-card text-[13px] text-ink">1</span>
+              <span className="truncate">{check?.refined ? check.baseline : check?.label}</span>
+              {check?.refined && <span className="shrink-0 rounded border border-band-fg px-1.5 py-0.5 text-[12px] font-bold">Q-First 구체화 · 근거 {check.evidenceIds.length}건</span>}
+            </dd>
+          </dl>
+          <div className="flex shrink-0 flex-col items-end gap-2.5">
+            <button onClick={() => onOpen(first.id)} className="btn-light rounded-lg bg-card px-5 py-2.5 text-[16px] font-bold text-ink">{STATE_LABEL[first.status]} · 상세 보기 ›</button>
+            {next.length > 0 && (
+              <span className="flex items-center gap-1 text-[14px] text-band-mute">다음
+                {next.map((x) => (
+                  <button key={x.id} onClick={() => onOpen(x.id)} className="btn-on-dark flex items-center gap-1.5 rounded-md px-1.5 py-0.5 font-bold text-band-fg">
+                    <span className={cx('h-2 w-2 shrink-0', x.group === 'emergency' ? 'rounded-full bg-red' : 'bg-blue')} />{x.equipment.no}
+                  </button>
+                ))}
+              </span>
+            )}
+          </div>
         </div>
-        <div className="col-span-3 flex flex-col justify-center gap-2 border-l border-band-line px-5 py-4">
-          <span className="text-[15px] font-bold text-band-mute">품질 영향 범위 · LOT</span>
-          {lots.slice(0, 4).map((x) => (
-            <div key={x.id} className="flex items-center gap-2 text-[16px]">
-              <span className={cx('shrink-0', x.quality.impact === 'yes' ? 'text-amber' : 'text-band-mute')}>{x.quality.impact === 'yes' ? '▲' : x.quality.impact === 'no' ? '–' : '○'}</span>
-              <span className="min-w-0 flex-1 truncate">{x.equipment.part} LOT <span className="num">{lotNo(x.quality.lot)}</span> <span className="text-[14px] text-band-mute">· {x.equipment.no}</span></span>
-              {x.quality.impact === 'yes'
-                ? <span className="shrink-0"><b className="num text-amber">{x.quality.defects}/{x.quality.inspected}</b> <span className="text-[15px] text-band-mute">격리 검토</span></span>
-                : x.quality.impact === 'no'
-                  ? <span className="shrink-0"><span className="num">{x.quality.defects}/{x.quality.inspected}</span> <span className="text-[15px] text-band-mute">기준 미만</span></span>
-                  : <span className="shrink-0 text-[15px] text-band-mute">검사 대기</span>}
-            </div>
-          ))}
-        </div>
-      </div>
+      )}
     </section>
   )
 }
@@ -200,9 +189,9 @@ function BigCard({ inc, onOpen, flash = false, asOf }: { inc: Incident; onOpen: 
       <div className="flex flex-wrap items-center gap-2 px-5">
         {insp ? (
           <>
-            <span className="inline-flex items-center gap-2 rounded-md bg-inv px-3 py-1.5 text-[15px] font-bold text-inv-fg">
+            <span title={INSP_TIP} className="inline-flex items-center gap-2 rounded-md bg-inv px-3 py-1.5 text-[15px] font-bold text-inv-fg">
               <HalfDot size={13} /> 점검중 <span className="num font-semibold">{inc.operation.since}~</span>
-              <span className="font-normal">· {inc.assignee ? `담당 ${inc.assignee} · ` : ''}<span className="num">{mins(inc.operation.since!, asOf)}</span>분째</span>
+              <span className="font-normal">· {inc.assignee ? `담당 ${inc.assignee} · ` : ''}<span className="num">{mins(inc.operation.since!, asOf)}</span>분째 · 센서 수신 중</span>
             </span>
             <span className="text-[12px] text-sub">같은 이상으로 새 알림 안 보냄</span>
           </>
