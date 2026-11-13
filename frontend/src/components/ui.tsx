@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 import sprite from '../assets/eqp-sprite.webp'
 import symbol from '../assets/logo-symbol.png'
 import { EQUIPMENT } from '../api/mock'
-import type { AlertGroup, EquipmentKind, Grade, MachineZone, Operation, QualityInfo, SignalSeries } from '../api/types'
+import type { AlertGroup, EquipmentKind, Grade, InvestigationView, MachineZone, Operation, QualityInfo, SignalSeries } from '../api/types'
 
 export const cx = (...a: (string | false | null | undefined)[]) => a.filter(Boolean).join(' ')
 
@@ -110,6 +110,18 @@ export function AiTag({ dark = false, label = 'Q-First 판단' }: { dark?: boole
       <img src={symbol} alt="" className={cx('h-3 w-3', !dark && 'invert')} />{label}
     </span>
   )
+}
+
+/** 에이전트 조사 상태 (태그 · 반응 없음). 조사 중은 점선 테두리, 완료는 Q-First 검정, 실패는 회색 */
+export function InvTag({ inv, refined = false }: { inv: InvestigationView | null; refined?: boolean }) {
+  if (!inv) return null
+  if (inv.status === 'running') return (
+    <span className="inline-flex items-center gap-1.5 whitespace-nowrap rounded border border-dashed border-ink px-2 py-0.5 text-[12px] font-bold text-ink">
+      <span aria-hidden className="h-1.5 w-1.5 animate-pulse rounded-full bg-ink" />Q-First 조사 중 <span className="font-normal text-sub">· {inv.trigger} 후</span>
+    </span>
+  )
+  if (inv.status === 'failed') return <span className="whitespace-nowrap rounded border border-card-bd px-2 py-0.5 text-[12px] font-bold text-sub">조사 실패 · 기본 안내 유지</span>
+  return <span className="whitespace-nowrap rounded bg-inv px-2 py-0.5 text-[12px] font-bold text-inv-fg">{refined ? 'Q-First 조사 반영' : '조사 완료'}</span>
 }
 
 export function Pill({ children, dark = false, className }: { children: ReactNode; dark?: boolean; className?: string }) {

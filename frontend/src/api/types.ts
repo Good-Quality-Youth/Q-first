@@ -2,7 +2,11 @@
 // 백엔드와 합의할 때 이 파일이 초안이 된다. 필드 이름은 camelCase, 시각은 "HH:mm" 또는 ISO 문자열.
 
 /** 시연 기준 시각. 14:00 판단 → 14:05 검사 결과 반영 */
-export type Snapshot = '1400' | '1405'
+/**
+ * 시연 장면 (API v1.1 재생 step). 14:15는 같은 재생 시각에서 조사 중 → 조사 완료 두 장면.
+ * 13:41 첫 예고 · 14:00 품질 영향 없음 · 14:05 LOT 검사 결과 반영 · 14:15 기존 비상 알람(조사 중 → 완료)
+ */
+export type Snapshot = '1341' | '1400' | '1405' | '1415a' | '1415b'
 
 /** 비상 = 기존 센서 알람이 울린 것, 예고 = Q-First가 찾은 이상 징후(알람 전) */
 export type AlertGroup = 'emergency' | 'warning'
@@ -107,6 +111,7 @@ export interface Incident {
   group: AlertGroup
   grade: Grade
   previousGrade?: Grade // 등급이 바뀐 경우 이전 등급
+  previousGroup?: AlertGroup // 예고 → 비상처럼 목록이 바뀐 경우 이전 목록
   rank: number // 그룹 안 순위
   title: string
   headline: string // 현장 말 한 줄: "배럴 온도 높음 · 기준보다 +3.7℃"
@@ -117,10 +122,10 @@ export interface Incident {
   signal: SignalSeries
   quality: QualityInfo
   evidence: EvidenceStep[]
-  checklist: string[]
-  /** 확인 항목별 설비 위치 (checklist와 같은 순서). 설비 밖 확인(LOT 검사 등)은 null.
-   *  API v1.0은 확인 항목을 코드로 주므로, 연결 시 코드 → 구역 표를 프론트에 둔다 */
-  checklistZones: (MachineZone | null)[]
+  /** 확인 항목. 조사로 구체화된 항목은 refined·baseline(구체화 전 기본 안내)·evidenceIds가 있다 */
+  checks: CheckView[]
+  /** 에이전트 조사(최신 1건). 등록된 조사가 없으면 null */
+  investigation: InvestigationView | null
   operation: Operation
   zones: MachineZone[] // 도식에서 칠할 이상 부위
 }

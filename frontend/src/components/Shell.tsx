@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState, ty
 import { NavLink, Outlet } from 'react-router-dom'
 import logo from '../assets/logo-symbol.png'
 import { resetStore, subscribe } from '../api'
+import { SCENES, sceneOf } from '../api/mock'
 import type { Snapshot } from '../api/types'
 import { ChatDrawer } from './Chat'
 import { cx } from './ui'
@@ -13,7 +14,8 @@ type Ctx = {
 }
 const AppCtx = createContext<Ctx>({ snap: '1405', setSnap: () => {}, toast: () => {}, version: 0, demo: false, news: false, dismissNews: () => {}, arrive: () => {}, restart: () => {}, chat: { open: false }, ask: () => {}, closeChat: () => {} })
 
-/** 주소에 ?demo 가 있으면 시연 모드: 14:00에서 시작하고, 발표자만 쓰는 '다음 장면' 버튼이 보인다 */
+/** 주소에 ?demo 가 있으면 시연 모드: 13:41(첫 예고)에서 시작하고, 발표자만 쓰는 '다음 장면' 버튼이 보인다.
+ *  다음 장면 = API v1.1 POST /demo/replay/next. 연결 후에는 성공 응답을 받으면 board를 바로 다시 부른다 */
 const isDemo = () => {
   // 공유 링크(아티팩트)용 빌드는 주소에 ?demo를 붙일 수 없어 시연 모드로 시작한다
   if (import.meta.env.VITE_DEMO_DEFAULT === '1') return true
@@ -24,8 +26,8 @@ export const useApp = () => useContext(AppCtx)
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const demo = useRef(isDemo()).current
-  // 시연 모드는 14:00에서 시작, 그 외(사용성 테스트)는 14:05 상태로 시작
-  const [snap, setSnap] = useState<Snapshot>(demo ? '1400' : '1405')
+  // 시연 모드는 13:41에서 시작, 그 외(사용성 테스트)는 14:05 상태로 시작
+  const [snap, setSnap] = useState<Snapshot>(demo ? SCENES[0].id : '1405')
   const [news, setNews] = useState(false)
   const [msg, setMsg] = useState('')
   const [version, setVersion] = useState(0)
@@ -40,8 +42,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, [])
   // 저장소가 바뀌면 화면 다시 읽기
   useEffect(() => subscribe(() => setVersion((v) => v + 1)), [])
-  const arrive = useCallback(() => { setSnap('1405'); setNews(true) }, [])
-  const restart = useCallback(() => { resetStore(); setNews(false); setSnap('1400'); window.location.hash = '#/' }, [])
+  const arrive = useCallback(() => {
+    setSnap((s) => SCENES[SCENES.findIndex((x) => x.id === s) + 1]?.id ?? s)
+    setNews(true)
+  }, [])
+  const restart = useCallback(() => { resetStore(); setNews(false); setSnap(SCENES[0].id); window.location.hash = '#/' }, [])
   return (
     <AppCtx.Provider value={{ snap, setSnap, toast, version, demo, news, dismissNews: () => setNews(false), arrive, restart, chat, ask, closeChat }}>
       {children}
@@ -72,6 +77,7 @@ const NAV = [
 
 export function Layout() {
   const { snap, demo, arrive, restart, ask } = useApp()
+  const next = SCENES[SCENES.findIndex((x) => x.id === snap) + 1]
   return (
     <div className="min-h-full">
       <header className="flex items-center gap-4 px-6 pt-4">
@@ -89,18 +95,18 @@ export function Layout() {
         {demo && (
           <div className="flex items-center gap-1 rounded-xl border border-dashed border-card-bd p-1" aria-label="시연 제어">
             <span className="px-2 text-[11px] font-bold text-mute">시연</span>
-            {snap === '1400'
-              ? <button onClick={arrive} className="btn-solid rounded-lg bg-inv px-3 py-1.5 text-[13px] font-bold text-inv-fg">다음 장면 ▶ 14:05 검사 결과 도착</button>
-              : <span className="px-2 text-[13px] font-semibold text-sub">14:05 반영됨</span>}
+            {next
+              ? <button onClick={arrive} className="btn-solid rounded-lg bg-inv px-3 py-1.5 text-[13px] font-bold text-inv-fg">다음 장면 ▶ <span className="num">{next.time}</span> {next.label}</button>
+              : <span className="px-2 text-[13px] font-semibold text-sub">마지막 장면</span>}
             <button onClick={restart} className="btn-line rounded-lg px-3 py-1.5 text-[13px] font-bold text-sub">↺ 처음으로</button>
           </div>
         )}
         <button onClick={() => ask()} className="flex items-center gap-2 rounded-xl border border-card-bd bg-card px-4 py-2 text-[13px] font-bold btn-line">💬 물어보기</button>
         <div className="flex items-center gap-2 rounded-xl border border-card-bd bg-card px-4 py-2 text-[13px]">
           <span className="h-2 w-2 animate-pulse rounded-full bg-green" aria-hidden="true" />
-          <span className="text-sub">마지막 판단</span>
-          <b className="num text-[15px]">{snap === '1405' ? '14:05' : '14:00'}</b>
-          <span className="text-mute">· 실시간</span>
+          <span className="text-sub">{demo ? '시나리오 재생' : '마지막 판단'}</span>
+          <b className="num text-[15px]">{sceneOf(snap).time}</b>
+          {!demo && <span className="text-mute">· 실시간</span>}
         </div>
       </header>
       <Outlet />

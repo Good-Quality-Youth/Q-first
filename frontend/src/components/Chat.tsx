@@ -23,7 +23,7 @@ function answer(q: string, b: Board, inc?: Incident): Answer {
   if (inc && q.includes('어디부터')) {
     return {
       judgment: `${inc.equipment.no}은 아래 순서로 확인해 보세요.`,
-      points: inc.checklist.map((c, i) => `${i + 1}. ${c}`),
+      points: inc.checks.map((c, i) => `${i + 1}. ${c.label}${c.refined ? ' (Q-First 조사로 구체화)' : ''}`),
       basis: [`${inc.signal.label} ${inc.signal.values[inc.signal.values.length - 1].toFixed(1)}${inc.signal.unit} (기준 ${inc.signal.reference})`, `품질 ${inc.quality.source} ${rate(inc)}`],
     }
   }

@@ -1,7 +1,7 @@
 // 화면이 부르는 함수는 이 파일에만 있다.
 // 지금은 가상 데이터(mock.ts)를 메모리에서 돌려주고, 백엔드 API가 나오면 각 함수 안쪽만 fetch로 바꾼다.
 // 예) getBoard → GET /api/board?snapshot=1405
-import { DEMO_DATE, PAST_HISTORY, REVISIONS, buildIncidents, buildNormal, normalIds } from './mock'
+import { DEMO_DATE, PAST_HISTORY, REVISIONS, atOrAfter, buildIncidents, buildNormal, normalIds, sceneOf } from './mock'
 import type {
   Board, DecisionInput, HistoryRecord, Incident, ResultInput, Snapshot,
 } from './types'
@@ -14,9 +14,11 @@ type Saved = {
   result?: ResultInput & { at: string; minutes: number }
 }
 const store: Record<string, Saved> = {}
-/** 시나리오상 이미 일어난 결정: EQP-001은 13:58에 점검 착수 (운영 상태 이상감지 → 점검중) */
-const SEED: Record<string, Saved> = { 'IG-0013': { decision: { type: 'start', at: '13:58' } } }
-const seed = () => { for (const [k, v] of Object.entries(SEED)) store[k] = { ...v } }
+/** 시나리오상 이미 일어난 결정: EQP-001은 13:58에 점검 착수 (운영 상태 이상감지 → 점검중). 13:41 장면에는 아직 없다 */
+const SEED: Record<string, Saved> = { 'IG-0014': { decision: { type: 'start', at: '13:58' } } }
+const SEED_FROM: Snapshot = '1400'
+const seeded: Record<string, Saved> = {}
+const seed = () => { for (const [k, v] of Object.entries(SEED)) { store[k] = { ...v }; seeded[k] = store[k] } }
 seed()
 const listeners = new Set<() => void>()
 const emit = () => listeners.forEach((f) => f())
@@ -26,8 +28,10 @@ export const subscribe = (f: () => void) => { listeners.add(f); return () => { l
 const DEMO_START = '14:06'
 const DEMO_SAVE = '14:18'
 
-function applyStore(inc: Incident): Incident {
+function applyStore(inc: Incident, snap: Snapshot): Incident {
   const s = store[inc.id]
+  // 시드 결정(13:58 착수)은 그 시각 이후 장면에서만 보인다. 사용자가 직접 바꾼 결정은 항상 보인다
+  if (s && s === seeded[inc.id] && !atOrAfter(snap, SEED_FROM)) return inc
   if (!s?.decision) return inc
   const t = s.decision.type
   if (t === 'reject') return { ...inc, status: 'rejected' }
@@ -40,7 +44,7 @@ function applyStore(inc: Incident): Incident {
 }
 
 function incidents(snap: Snapshot): Incident[] {
-  return buildIncidents(snap).map(applyStore)
+  return buildIncidents(snap).map((i) => applyStore(i, snap))
 }
 
 // ── 조회 ─────────────────────────────────
@@ -49,10 +53,11 @@ export async function getBoard(snapshot: Snapshot): Promise<Board> {
   const all = incidents(snapshot)
   const emergency = all.filter((x) => x.group === 'emergency')
   const warning = all.filter((x) => x.group === 'warning')
-  const decided = Object.values(store).map((s) => s.decision?.type)
+  // 조치 현황은 이 장면에서 보이는 상태로 센다 (13:58 착수는 13:41 장면에 아직 없음)
+  const st = all.map((x) => x.status)
   return {
     snapshot,
-    asOf: snapshot === '1405' ? '14:05' : '14:00',
+    asOf: sceneOf(snapshot).time,
     emergency, warning,
     normal: normalIds(snapshot).map((id) => buildNormal(id, snapshot)),
     summary: {
@@ -62,9 +67,9 @@ export async function getBoard(snapshot: Snapshot): Promise<Board> {
       normal: normalIds(snapshot).length,
       qualityLinked: all.filter((x) => x.quality.impact === 'yes').map((x) => x.equipment.id),
       handled: {
-        started: decided.filter((d) => d === 'start').length,
-        onHold: decided.filter((d) => d === 'hold').length,
-        rejected: decided.filter((d) => d === 'reject').length,
+        started: st.filter((d) => d === 'inProgress' || d === 'done').length,
+        onHold: st.filter((d) => d === 'onHold').length,
+        rejected: st.filter((d) => d === 'rejected').length,
         total: all.length,
       },
     },
@@ -110,7 +115,7 @@ export async function getHistory(snapshot: Snapshot): Promise<HistoryRecord[]> {
     const s = store[inc.id]
     const status: HistoryRecord['status'] = s?.result ? OUTCOME_LABEL[s.result.outcome]
       : s?.decision?.type === 'reject' ? '반려' : s?.decision?.type === 'hold' ? '보류' : '진행 중'
-    const revs = (REVISIONS[inc.id] ?? []).filter((r) => snapshot === '1405' || r.snap === '1400')
+    const revs = (REVISIONS[inc.id] ?? []).filter((r) => atOrAfter(snapshot, r.snap))
     return {
       id: inc.id, date: DEMO_DATE, time: inc.detectedAt,
       equipment: inc.equipment, title: inc.title.split(' →')[0].split(' · ')[0], group: inc.group, rank: inc.rank, grade: inc.grade,

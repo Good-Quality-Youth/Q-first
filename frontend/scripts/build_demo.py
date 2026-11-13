@@ -1,6 +1,7 @@
-"""합성 데이터셋 v6.1/v7(qfirst_dataset) → src/api/demo-data.json
-사용: python3 scripts/build_demo_v61.py <v6.1 폴더>
-- 시각은 데이터에 적힌 그대로 'HH:mm'로 쓴다. 평소 범위 = 정상 행(앞 900행)의 중앙값 ± 3×(1.4826×MAD).
+"""합성 데이터셋 v8(qfirst_dataset_v8) → src/api/demo-data.json
+사용: python3 scripts/build_demo.py <qfirst_dataset_v8 폴더>
+- 시연 장면 4개: 13:41(첫 예고), 14:00, 14:05(LOT 재평가), 14:15(기존 비상 알람). 13:41은 데이터에 스냅숏 파일이 없어 센서·점수만 뽑는다.
+- 시각은 데이터에 적힌 그대로 'HH:mm'로 쓴다(데이터 시각은 공장 현지 시각 KST, 끝의 Z는 UTC가 아님). 평소 범위 = 정상 행(앞 900행)의 중앙값 ± 3×(1.4826×MAD).
 - 목록·등급·검수 수치·이상 점수는 demo_snapshot_*.csv, LOT는 equipment_status.lot_no 그대로.
 - 대표 센서: 몸체·속뚜껑 설비는 사출 압력(MPa), 뚜껑 설비는 배럴 온도, EQP-004만 스크류 회전(rpm).
 """
@@ -23,14 +24,15 @@ def base(rows, col, k):
     med = S.median(n); mad = S.median([abs(x - med) for x in n]) * 1.4826
     return med, [round(med - 3 * mad, 3), round(med + 3 * mad, 3)]
 
-out = {'source': 'qfirst_dataset_v6.1', 'equipment': {}, 'quality': {}}
+SNAPS = (('1341', '13:41'), ('1400', '14:00'), ('1405', '14:05'), ('1415', '14:15'))
+out = {'source': 'qfirst_dataset_v8', 'equipment': {}, 'quality': {}}
 for e, rows in by.items():
     col, label, unit, k, lo_c, hi_c = OVERRIDE.get(e, SENSOR[reg[e]['part_type']])
     limits = [round(float(reg[e][lo_c]) * k, 2), round(float(reg[e][hi_c]) * k, 2)]
     med, band = base(rows, col, k)
     idx = {r['recorded_at'][:16]: i for i, r in enumerate(rows)}
     snaps = {}
-    for snap, t in (('1400', '14:00'), ('1405', '14:05')):
+    for snap, t in SNAPS:
         i = idx[DAY + t]; win = rows[i - 60:i + 1]
         vals = [round(float(r[col]) * k, 3) for r in win]
         outs = None
@@ -44,11 +46,11 @@ for e, rows in by.items():
               no=reg[e]['equipment_name'], part=reg[e]['part_name'])
     if e == 'EQP-001':  # 함께 떨어지는 배럴 온도 (근거 경로용)
         tm, _ = base(rows, 'temperature_celsius', 1)
-        eq['aux'] = dict(label='배럴 온도', reference=round(tm, 1), **{s: float(rows[idx[DAY + t]]['temperature_celsius']) for s, t in (('1400', '14:00'), ('1405', '14:05'))})
+        eq['aux'] = dict(label='배럴 온도', reference=round(tm, 1), **{s: float(rows[idx[DAY + t]]['temperature_celsius']) for s, t in SNAPS})
     out['equipment'][e] = eq
 
 ABN = set()
-for snap in ('1400', '1405'):
+for snap in ('1400', '1405', '1415'):
     for r in rd(f'demo_snapshot_20260203_{snap}.csv'):
         out['quality'].setdefault(r['equipment_id'], {})[snap] = dict(inspected=int(r['inspected_n']), defects=int(r['defect_n']))
         ABN.add(r['equipment_id'])
@@ -78,6 +80,5 @@ for g in rd('inspection_guide.csv'):
 out['pastHistory'] = sorted(past, key=lambda h: (h['date'], h['time']), reverse=True)
 json.dump(out, open(os.path.join(os.path.dirname(__file__), '..', 'src', 'api', 'demo-data.json'), 'w'), ensure_ascii=False)
 for e, q in out['equipment'].items():
-    a, b = q['snapshots']['1400'], q['snapshots']['1405']
-    print(e, q['label'], q['reference'], q['band'], a['values'][-1], b['values'][-1], b['outSince'], b['alarm'], b['score'], b['risk'], b['lot'], b['operation'], b.get('grade'))
+    print(e, q['label'], q['reference'], [(s, q['snapshots'][s]['values'][-1], q['snapshots'][s]['alarm'], q['snapshots'][s]['score'], q['snapshots'][s]['operation'], q['snapshots'][s].get('grade')) for s, _ in SNAPS])
 print(len(past), [ (h['id'],h['result']) for h in past])

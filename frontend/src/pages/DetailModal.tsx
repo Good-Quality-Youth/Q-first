@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { getIncident } from '../api'
 import { useApp } from '../components/Shell'
 import { useLoad } from '../components/useLoad'
-import { AiTag, GradeChip, MachineFigure, OpChip, QualityLine, Sparkline, TONE, cx, diffText, fmt, tone } from '../components/ui'
+import { AiTag, GradeChip, InvTag, MachineFigure, OpChip, QualityLine, Sparkline, TONE, cx, diffText, fmt, tone } from '../components/ui'
 
 /** 카드 클릭 → 상세 팝업: 판단 근거(목록) · 확인할 것 · 점검 시작 */
 // 3D(three.js + 모델 약 3MB)는 상세를 처음 열 때만 불러온다. 받는 동안은 사진 + 점 표시
@@ -27,6 +27,8 @@ export function DetailModal({ id, onClose }: { id: string; onClose: () => void }
   const t = TONE[tone(inc.group)]
   const groupLabel = inc.group === 'emergency' ? '비상' : '예고'
   const started = inc.status === 'inProgress' || inc.status === 'done'
+  // 조사로 구체화된 확인 항목이 가리키는 근거 (API v1.1 CheckItem.evidenceIds)
+  const linked = new Set(inc.checks.flatMap((c) => c.evidenceIds))
   return (
     <div className="fixed inset-0 z-20 flex items-center justify-center bg-ink/40 p-6" onClick={onClose}>
       <div ref={ref} tabIndex={-1} role="dialog" aria-modal="true" aria-label={`${inc.equipment.id} 상세`}
@@ -35,7 +37,7 @@ export function DetailModal({ id, onClose }: { id: string; onClose: () => void }
         <div className="flex items-start gap-4">
           <span className="num text-[52px] font-semibold leading-none">{inc.rank}</span>
           <Suspense fallback={<MachineFigure id={inc.equipment.id} zones={inc.zones} group={inc.group} size={150} />}>
-            <Machine3D zones={inc.zones} group={inc.group} focus={spot !== null ? inc.checklistZones[spot] : null} width={380} height={220} fallback={<MachineFigure id={inc.equipment.id} zones={inc.zones} group={inc.group} size={150} />} />
+            <Machine3D zones={inc.zones} group={inc.group} focus={spot !== null ? inc.checks[spot]?.zone ?? null : null} width={380} height={220} fallback={<MachineFigure id={inc.equipment.id} zones={inc.zones} group={inc.group} size={150} />} />
           </Suspense>
           <div className="flex flex-col">
             <h2 className="text-[30px] font-bold leading-tight">{inc.equipment.no}</h2>
@@ -46,7 +48,7 @@ export function DetailModal({ id, onClose }: { id: string; onClose: () => void }
             <div className="flex items-center gap-2">
               <span className={cx('text-[13px] font-bold', t.tx)}>{groupLabel} {inc.rank}위</span>
               <GradeChip grade={inc.grade} group={inc.group} long />
-              {inc.previousGrade && <span className="rounded-md border-2 border-ink px-2 py-0.5 text-[12px] font-bold">{inc.previousGrade}등급 → {inc.grade}등급</span>}
+              {inc.previousGrade && <span className="rounded-md border-2 border-ink px-2 py-0.5 text-[12px] font-bold">{inc.previousGroup ? '예고 ' : ''}{inc.previousGrade}등급 → {inc.grade}등급</span>}
             </div>
             <h3 className="text-[20px] font-bold">{inc.headline}</h3>
           </div>
@@ -64,10 +66,10 @@ export function DetailModal({ id, onClose }: { id: string; onClose: () => void }
             {inc.evidence.map((e, i) => {
               const derived = e.kind.includes('Q-First') || e.kind === '대조'
               return (
-                <li key={i} className="grid grid-cols-[52px_76px_1fr_auto] items-baseline gap-3 px-4 py-2.5">
+                <li key={i} className={cx('grid grid-cols-[52px_76px_1fr_auto] items-baseline gap-3 px-4 py-2.5', e.id && linked.has(e.id) && 'bg-soft')}>
                   <span className="num text-[14px] text-sub">{e.at ?? ''}</span>
                   <span className={cx('text-[13px] font-bold', e.kind.includes('기존') ? 'text-red-tx' : e.kind.includes('Q-First') ? 'text-blue-tx' : 'text-sub')}>{KIND[e.kind] ?? e.kind}</span>
-                  <span className="min-w-0 text-[15px]"><b>{e.title}</b>{e.detail && <span className="text-sub"> · {e.detail}</span>}</span>
+                  <span className="min-w-0 text-[15px]"><b>{e.title}</b>{e.detail && <span className="text-sub"> · {e.detail}</span>}{e.id && linked.has(e.id) && <span className="ml-2 whitespace-nowrap text-[12px] font-bold text-ink">↳ 점검 안내 근거</span>}</span>
                   <span title={derived ? 'Q-First가 기록을 읽어 낸 해석이에요. 점검으로 확인이 필요해요.' : '설비·검사에 남은 값 그대로예요.'}
                     className={cx('whitespace-nowrap rounded px-1.5 py-0.5 text-[11px] font-bold', derived ? 'bg-inv text-inv-fg' : 'border border-card-bd text-sub')}>
                     {derived ? 'Q-First 해석' : '기록'}
@@ -92,15 +94,32 @@ export function DetailModal({ id, onClose }: { id: string; onClose: () => void }
             <QualityLine q={inc.quality} />
           </div>
           <section className="flex flex-col gap-2">
-            <h4 className="text-[15px] font-extrabold">확인할 것</h4>
-            {inc.checklist.map((c, i) => {
-              const z = inc.checklistZones[i]
+            <div className="flex items-center gap-2">
+              <h4 className="text-[15px] font-extrabold">확인할 것</h4>
+              <InvTag inv={inc.investigation} refined={inc.checks.some((c) => c.refined)} />
+            </div>
+            {inc.investigation?.status === 'running' && (
+              <p className="rounded-lg border border-dashed border-card-bd px-3 py-2 text-[13px] text-sub">Q-First가 센서 구간·LOT·검사 이력을 조회하고 있어요. 끝나면 확인 항목이 근거와 함께 구체화돼요. 그 전에는 기본 안내로 점검하면 돼요.</p>
+            )}
+            {inc.investigation?.status === 'failed' && (
+              <p className="rounded-lg border border-card-bd px-3 py-2 text-[13px] text-sub">조사를 끝내지 못했어요. 순위와 기본 안내는 그대로라 아래 항목대로 점검하면 돼요.</p>
+            )}
+            {inc.checks.map((c, i) => {
+              const z = c.zone
               const on = spot === i
               return (
                 <div key={i} className={cx('flex items-stretch overflow-hidden rounded-lg border', on ? 'border-ink' : 'border-card-bd')}>
                   <label className="btn-line flex flex-1 cursor-pointer items-center gap-3 px-4 py-3 text-[15px] font-semibold">
-                    <input type="checkbox" checked={!!ck[i]} onChange={() => setCk({ ...ck, [i]: !ck[i] })} className="h-5 w-5 accent-ink" />
-                    {c}
+                    <input type="checkbox" checked={!!ck[i]} onChange={() => setCk({ ...ck, [i]: !ck[i] })} className="h-5 w-5 shrink-0 accent-ink" />
+                    <span className="flex flex-col gap-1">
+                      <span>{c.label}</span>
+                      {c.refined && (
+                        <span className="flex flex-wrap items-center gap-2 text-[12px] font-normal text-sub">
+                          <span className="rounded bg-inv px-1.5 py-0.5 font-bold text-inv-fg">Q-First 조사로 구체화 · 근거 {c.evidenceIds.length}건</span>
+                          {c.baseline && <span>기본 안내: {c.baseline}</span>}
+                        </span>
+                      )}
+                    </span>
                   </label>
                   {z && (
                     <button type="button" aria-pressed={on} onClick={() => setSpot(on ? null : i)}
