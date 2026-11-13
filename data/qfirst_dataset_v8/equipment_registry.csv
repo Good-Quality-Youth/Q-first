@@ -1,0 +1,11 @@
+﻿equipment_id,equipment_name,equipment_type,part_type,part_name,process_id,dimension_name,dimension_nominal_mm,dimension_tolerance_mm,inspection_method,baseline_pressure_kpa,pressure_low_limit_kpa,pressure_high_limit_kpa,baseline_temp_c,temp_low_limit_c,temp_high_limit_c,baseline_rpm,rpm_low_limit,rpm_high_limit,scenario_role
+EQP-001,사출기 1,INJECTION,BODY,용기 몸체,MOLD-BD1,벽 두께,2.0,0.1,30분 묶음 검수,89000,80100.0,97900.0,205.0,200.0,210.0,95.0,80.8,109.2,비상 1등급
+EQP-002,사출기 2,INJECTION,INNER_LID,속뚜껑,MOLD-IL1,외경,58.0,0.15,생산 2분 뒤 검수,82400,74160.0,90640.0,201.0,196.0,206.0,89.0,75.6,102.3,비상 2등급(점수 1위)
+EQP-003,사출기 3,INJECTION,CAP,뚜껑,MOLD-CP1,높이,18.0,0.12,생산 1분 뒤 검수,88000,79200.0,96800.0,209.0,204.0,214.0,96.0,81.6,110.4,예고 4→3등급
+EQP-004,사출기 4,INJECTION,INNER_LID,속뚜껑,MOLD-IL2,외경,58.0,0.15,생산 2분 뒤 검수,82800,74520.0,91080.0,201.5,196.5,206.5,89.5,76.1,102.9,비상 2등급(점수 2위)
+EQP-005,사출기 5,INJECTION,BODY,용기 몸체,MOLD-BD2,벽 두께,2.0,0.1,30분 묶음 검수,89400,80460.0,98340.0,205.5,200.5,210.5,95.5,81.2,109.8,정상 대조군
+EQP-006,사출기 6,INJECTION,BODY,용기 몸체,MOLD-BD3,벽 두께,2.0,0.1,30분 묶음 검수,88600,79740.0,97460.0,204.5,199.5,209.5,94.6,80.4,108.8,정상 대조군
+EQP-007,사출기 7,INJECTION,CAP,뚜껑,MOLD-CP2,높이,18.0,0.12,생산 1분 뒤 검수,87600,78840.0,96360.0,208.5,203.5,213.5,95.6,81.3,109.9,정상 대조군
+EQP-008,사출기 8,INJECTION,INNER_LID,속뚜껑,MOLD-IL3,외경,58.0,0.15,생산 2분 뒤 검수,82100,73890.0,90310.0,200.5,195.5,205.5,88.6,75.3,101.9,정상 대조군
+EQP-009,사출기 9,INJECTION,CAP,뚜껑,MOLD-CP3,높이,18.0,0.12,생산 1분 뒤 검수,88300,79470.0,97130.0,209.5,204.5,214.5,96.4,81.9,110.9,정상 대조군
+EQP-010,사출기 10,INJECTION,CAP,뚜껑,MOLD-CP4,높이,18.0,0.12,생산 1분 뒤 검수,87800,79020.0,96580.0,208.0,203.0,213.0,95.8,81.4,110.2,정상 대조군
