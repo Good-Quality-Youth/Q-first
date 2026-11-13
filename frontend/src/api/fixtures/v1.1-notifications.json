@@ -1,0 +1,99 @@
+{
+  "after1400": {
+    "items": [
+      {
+        "id": "N-EQP-002-1404",
+        "type": "newIncident",
+        "incidentId": "IG-0016",
+        "revision": 1,
+        "at": "2026-02-03T05:04:00Z",
+        "equipment": {
+          "id": "EQP-002",
+          "no": "2호기",
+          "part": "속뚜껑"
+        },
+        "group": "emergency",
+        "fromGrade": null,
+        "toGrade": 2,
+        "message": "기존 센서 알람이 발생했습니다.",
+        "firstCheck": {
+          "code": "PRESSURE_CHECK",
+          "label": "사출 압력·유압 회로 확인"
+        }
+      },
+      {
+        "id": "N-EQP-004-1404",
+        "type": "newIncident",
+        "incidentId": "IG-0017",
+        "revision": 1,
+        "at": "2026-02-03T05:04:00Z",
+        "equipment": {
+          "id": "EQP-004",
+          "no": "4호기",
+          "part": "속뚜껑"
+        },
+        "group": "emergency",
+        "fromGrade": null,
+        "toGrade": 2,
+        "message": "기존 센서 알람이 발생했습니다.",
+        "firstCheck": {
+          "code": "SCREW_DRIVE",
+          "label": "스크류 구동부·모터 확인"
+        }
+      },
+      {
+        "id": "N-EQP-003-1404",
+        "type": "gradeChanged",
+        "incidentId": "IG-0015",
+        "revision": 3,
+        "at": "2026-02-03T05:04:00Z",
+        "equipment": {
+          "id": "EQP-003",
+          "no": "3호기",
+          "part": "뚜껑"
+        },
+        "group": "warning",
+        "fromGrade": 4,
+        "toGrade": 3,
+        "message": "CP-0076 검사 근거로 예고 4등급에서 3등급으로 변경됐습니다.",
+        "firstCheck": {
+          "code": "BARREL_HEATING",
+          "label": "배럴 히터·열전대 확인"
+        }
+      }
+    ],
+    "nextCursor": "N-V8-1405",
+    "hasMore": false
+  },
+  "after1405": {
+    "items": [
+      {
+        "id": "N-EQP-003-1415",
+        "type": "gradeChanged",
+        "incidentId": "IG-0015",
+        "revision": 4,
+        "at": "2026-02-03T05:15:00Z",
+        "equipment": {
+          "id": "EQP-003",
+          "no": "3호기",
+          "part": "뚜껑"
+        },
+        "group": "emergency",
+        "fromGrade": 3,
+        "toGrade": 1,
+        "message": "기존 온도 알람으로 같은 사건이 비상 1등급으로 이동했습니다.",
+        "firstCheck": {
+          "code": "BARREL_HEATING",
+          "label": "배럴 히터·열전대 확인"
+        }
+      }
+    ],
+    "nextCursor": "N-V8-1415",
+    "hasMore": false
+  },
+  "after1415": {
+    "items": [],
+    "nextCursor": "N-V8-1415",
+    "hasMore": false
+  }
+}

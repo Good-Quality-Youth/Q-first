@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from 'react'
+import { replayEnabled } from '../api/replay'
 import { getBoard } from '../api'
 import type { Board as BoardData, Incident, NormalEquipment, Snapshot } from '../api/types'
 import { useApp } from '../components/Shell'
@@ -13,11 +14,15 @@ const STATUS: Record<Incident['status'], string> = {
 }
 
 export default function Board() {
-  const { snap, news, dismissNews } = useApp()
+  const { snap, news, dismissNews, notice: apiNotice } = useApp()
   const data = useLoad(() => getBoard(snap))
   const [open, setOpen] = useState<string | null>(null)
   if (!data) return <p className="p-6 text-mute">불러오는 중…</p>
-  const notice = news ? noticeOf(data, snap) : null
+  const alerted = apiNotice && [...data.emergency, ...data.warning].find((i) => i.id === apiNotice.incidentId && i.grade === apiNotice.toGrade)
+  const notice = !news ? null : replayEnabled
+    ? alerted && apiNotice && { inc: alerted, text: <><b>{alerted.equipment.no}</b> · {apiNotice.message}</>,
+        box: alerted.group === 'emergency' ? 'border-red bg-red-bg' : 'border-blue bg-blue-bg' }
+    : noticeOf(data, snap)
   return (
     <main className="flex flex-col gap-4 px-6 pb-10 pt-4">
       {notice && (

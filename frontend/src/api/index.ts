@@ -1,6 +1,7 @@
 // 화면이 부르는 함수는 이 파일에만 있다.
 // 지금은 가상 데이터(mock.ts)를 메모리에서 돌려주고, 백엔드 API가 나오면 각 함수 안쪽만 fetch로 바꾼다.
 // 예) getBoard → GET /api/board?snapshot=1405
+import { readLiveBoard, readLiveIncident, replayEnabled } from './replay'
 import { DEMO_DATE, PAST_HISTORY, REVISIONS, atOrAfter, buildIncidents, buildNormal, normalIds, sceneOf } from './mock'
 import type {
   Board, DecisionInput, HistoryRecord, Incident, ResultInput, Snapshot,
@@ -49,6 +50,7 @@ function incidents(snap: Snapshot): Incident[] {
 
 // ── 조회 ─────────────────────────────────
 export async function getBoard(snapshot: Snapshot): Promise<Board> {
+  if (replayEnabled) return readLiveBoard()
   await wait()
   const all = incidents(snapshot)
   const emergency = all.filter((x) => x.group === 'emergency')
@@ -77,12 +79,14 @@ export async function getBoard(snapshot: Snapshot): Promise<Board> {
 }
 
 export async function getIncident(id: string, snapshot: Snapshot): Promise<Incident | undefined> {
+  if (replayEnabled) return readLiveIncident(id)
   await wait(60)
   return incidents(snapshot).find((x) => x.id === id)
 }
 
 // ── 저장 ─────────────────────────────────
 export async function saveDecision(id: string, input: DecisionInput): Promise<void> {
+  if (replayEnabled) throw new Error('실제 연동 모드의 점검 기록 API는 아직 연결 전입니다.')
   if (input.type !== 'start' && !input.reason) throw new Error('반려·보류는 사유가 필요해요')
   await wait()
   store[id] = { decision: { ...input, at: DEMO_START } }
@@ -90,6 +94,7 @@ export async function saveDecision(id: string, input: DecisionInput): Promise<vo
 }
 
 export async function saveResult(id: string, input: ResultInput): Promise<void> {
+  if (replayEnabled) throw new Error('실제 연동 모드의 점검 기록 API는 아직 연결 전입니다.')
   if (store[id]?.decision?.type !== 'start') throw new Error('착수한 건만 결과를 저장할 수 있어요')
   await wait()
   store[id].result = { ...input, at: DEMO_SAVE, minutes: 12 }
@@ -110,6 +115,7 @@ export function getSaved(id: string): Saved | undefined {
 const OUTCOME_LABEL = { found: '이상 발견', notFound: '이상 없음', unclear: '판단 어려움' } as const
 
 export async function getHistory(snapshot: Snapshot): Promise<HistoryRecord[]> {
+  if (replayEnabled) return []
   await wait()
   const today: HistoryRecord[] = incidents(snapshot).map((inc) => {
     const s = store[inc.id]

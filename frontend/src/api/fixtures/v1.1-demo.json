@@ -3,11 +3,11 @@
     "board": {
       "boardId": "BOARD-DEMO-1",
       "snapshotVersion": 1,
-      "asOf": "2026-02-03T13:41:00Z",
-      "displayTimeZone": "UTC",
-      "notificationCursor": "N-DEMO-1341",
+      "asOf": "2026-02-03T04:41:00Z",
+      "displayTimeZone": "Asia/Seoul",
+      "notificationCursor": "N-V8-1341",
       "replay": {
-        "currentAt": "2026-02-03T13:41:00Z",
+        "currentAt": "2026-02-03T04:41:00Z",
         "step": 1,
         "hasNext": true
       },
@@ -24,26 +24,26 @@
           "rejected": 0,
           "done": 0
         },
-        "firstIncidentId": "INC-DEMO-001",
+        "firstIncidentId": "IG-0014",
         "nextIncidentIds": [
-          "INC-DEMO-003"
+          "IG-0015"
         ],
         "qualityLots": [
           {
             "lotId": "BD-0056",
-            "incidentId": "INC-DEMO-001",
+            "incidentId": "IG-0014",
             "suggestion": "awaitInspection"
           },
           {
             "lotId": "CP-0076",
-            "incidentId": "INC-DEMO-003",
+            "incidentId": "IG-0015",
             "suggestion": "awaitInspection"
           }
         ]
       },
       "emergency": [
         {
-          "incidentId": "INC-DEMO-001",
+          "incidentId": "IG-0014",
           "equipment": {
             "id": "EQP-001",
             "no": "1호기",
@@ -56,14 +56,14 @@
           "grade": 2,
           "rank": 1,
           "previousGrade": null,
-          "detectedAt": "2026-02-03T13:26:00Z",
+          "detectedAt": "2026-02-03T04:26:00Z",
           "headline": "사출 압력 · 기존 비상 알람",
-          "rankReason": "관련 생산분 품질 영향 미확인.",
+          "rankReason": "관련 생산분의 품질 영향은 미확인입니다.",
           "operation": {
             "status": "alarm",
             "alarmState": "active",
             "dataState": "available",
-            "since": "2026-02-03T13:33:00Z",
+            "since": "2026-02-03T04:33:00Z",
             "startedBy": null
           },
           "quality": {
@@ -86,7 +86,7 @@
             "metric": "injectionPressure",
             "label": "사출 압력",
             "unit": "MPa",
-            "value": 80.53389999999999,
+            "value": 78.0191,
             "reference": 89.0,
             "band": null,
             "alarmLimits": {
@@ -96,11 +96,11 @@
             "marks": [
               {
                 "kind": "firstWarning",
-                "at": "2026-02-03T13:26:00Z"
+                "at": "2026-02-03T04:26:00Z"
               },
               {
                 "kind": "firstAlarm",
-                "at": "2026-02-03T13:33:00Z"
+                "at": "2026-02-03T04:33:00Z"
               }
             ]
           },
@@ -109,7 +109,7 @@
       ],
       "warning": [
         {
-          "incidentId": "INC-DEMO-003",
+          "incidentId": "IG-0015",
           "equipment": {
             "id": "EQP-003",
             "no": "3호기",
@@ -122,9 +122,9 @@
           "grade": 4,
           "rank": 1,
           "previousGrade": null,
-          "detectedAt": "2026-02-03T13:41:00Z",
-          "headline": "배럴 온도 · 알람 전 이상 징후",
-          "rankReason": "관련 생산분 품질 영향 미확인.",
+          "detectedAt": "2026-02-03T04:41:00Z",
+          "headline": "배럴 온도 상승 · 이상 예고",
+          "rankReason": "관련 생산분의 품질 영향은 미확인입니다.",
           "operation": {
             "status": "running",
             "alarmState": "inactive",
@@ -152,7 +152,7 @@
             "metric": "barrelTemperature",
             "label": "배럴 온도",
             "unit": "°C",
-            "value": 210.03,
+            "value": 210.78,
             "reference": 209.0,
             "band": null,
             "alarmLimits": {
@@ -162,7 +162,7 @@
             "marks": [
               {
                 "kind": "firstWarning",
-                "at": "2026-02-03T13:41:00Z"
+                "at": "2026-02-03T04:41:00Z"
               }
             ]
           },
@@ -292,21 +292,19 @@
       "unavailable": []
     },
     "incident": {
-      "incidentId": "INC-DEMO-003",
+      "incidentId": "IG-0015",
       "equipment": {
         "id": "EQP-003",
         "no": "3호기",
         "part": "뚜껑"
       },
-      "detectedAt": "2026-02-03T13:41:00Z",
+      "detectedAt": "2026-02-03T04:41:00Z",
       "judgment": {
         "revision": 1,
-        "asOf": "2026-02-03T13:41:00Z",
         "group": "warning",
         "grade": 4,
         "rank": 1,
         "previousGrade": null,
-        "reason": "관련 생산분 품질 영향 미확인.",
         "quality": {
           "impact": null,
           "lotIds": [
@@ -316,17 +314,17 @@
           "defects": null,
           "defectRate": null,
           "thresholdRate": 0.03
-        }
+        },
+        "asOf": "2026-02-03T04:41:00Z",
+        "reason": "관련 생산분의 품질 영향은 미확인입니다."
       },
       "revisions": [
         {
           "revision": 1,
-          "asOf": "2026-02-03T13:41:00Z",
           "group": "warning",
           "grade": 4,
           "rank": 1,
           "previousGrade": null,
-          "reason": "관련 생산분 품질 영향 미확인.",
           "quality": {
             "impact": null,
             "lotIds": [
@@ -336,25 +334,27 @@
             "defects": null,
             "defectRate": null,
             "thresholdRate": 0.03
-          }
+          },
+          "asOf": "2026-02-03T04:41:00Z",
+          "reason": "관련 생산분의 품질 영향은 미확인입니다."
         }
       ],
       "evidence": [
         {
-          "id": "EV-003-1341-TEMP",
-          "kind": "sensor",
-          "basis": "record",
-          "title": "13:41 배럴 온도",
-          "detail": "210.03°C. 정상 기준 209.0°C, 알람 상한 214.0°C.",
-          "observedAt": "2026-02-03T13:41:00Z"
-        },
-        {
-          "id": "EV-003-LOT",
+          "id": "CP-0076",
           "kind": "lot",
           "basis": "record",
           "title": "생산 LOT CP-0076",
-          "detail": "13:30부터 EQP-003에서 생산된 뚜껑 LOT.",
-          "observedAt": "2026-02-03T13:30:00Z"
+          "detail": "EQP-003에서 13:30부터 생산된 뚜껑 LOT.",
+          "observedAt": "2026-02-03T04:30:00Z"
+        },
+        {
+          "id": "ES-012262",
+          "kind": "sensor",
+          "basis": "record",
+          "title": "배럴 온도 관측",
+          "detail": "13:41 210.78°C / 기존 알람 상한 214.0°C.",
+          "observedAt": "2026-02-03T04:41:00Z"
         }
       ],
       "checklist": [
@@ -369,7 +369,7 @@
         "metric": "barrelTemperature",
         "label": "배럴 온도",
         "unit": "°C",
-        "value": 210.03,
+        "value": 210.78,
         "reference": 209.0,
         "band": null,
         "alarmLimits": {
@@ -379,7 +379,7 @@
         "marks": [
           {
             "kind": "firstWarning",
-            "at": "2026-02-03T13:41:00Z"
+            "at": "2026-02-03T04:41:00Z"
           }
         ]
       },
@@ -417,52 +417,44 @@
       }
     }
   },
-  "alarmInvestigating1415": {
+  "beforeInspection1400": {
     "board": {
       "boardId": "BOARD-DEMO-1",
-      "snapshotVersion": 5,
-      "asOf": "2026-02-03T14:15:00Z",
-      "displayTimeZone": "UTC",
-      "notificationCursor": "N-DEMO-1415",
+      "snapshotVersion": 2,
+      "asOf": "2026-02-03T05:00:00Z",
+      "displayTimeZone": "Asia/Seoul",
+      "notificationCursor": "N-V8-1400",
       "replay": {
-        "currentAt": "2026-02-03T14:15:00Z",
-        "step": 4,
-        "hasNext": false
+        "currentAt": "2026-02-03T05:00:00Z",
+        "step": 2,
+        "hasNext": true
       },
       "summary": {
-        "emergencyCount": 4,
-        "warningCount": 0,
-        "normalCount": 6,
+        "emergencyCount": 1,
+        "warningCount": 1,
+        "normalCount": 8,
         "unavailableCount": 0,
-        "qualityLinkedCount": 2,
+        "qualityLinkedCount": 1,
         "workCounts": {
-          "open": 3,
+          "open": 1,
           "inProgress": 1,
           "onHold": 0,
           "rejected": 0,
           "done": 0
         },
-        "firstIncidentId": "INC-DEMO-003",
-        "nextIncidentIds": [
-          "INC-DEMO-002",
-          "INC-DEMO-004"
-        ],
+        "firstIncidentId": "IG-0015",
+        "nextIncidentIds": [],
         "qualityLots": [
           {
             "lotId": "BD-0056",
-            "incidentId": "INC-DEMO-001",
-            "suggestion": "reviewContainment"
-          },
-          {
-            "lotId": "CP-0076",
-            "incidentId": "INC-DEMO-003",
+            "incidentId": "IG-0014",
             "suggestion": "reviewContainment"
           }
         ]
       },
       "emergency": [
         {
-          "incidentId": "INC-DEMO-001",
+          "incidentId": "IG-0014",
           "equipment": {
             "id": "EQP-001",
             "no": "1호기",
@@ -474,15 +466,15 @@
           "group": "emergency",
           "grade": 1,
           "rank": 1,
-          "previousGrade": null,
-          "detectedAt": "2026-02-03T13:26:00Z",
+          "previousGrade": 2,
+          "detectedAt": "2026-02-03T04:26:00Z",
           "headline": "사출 압력 · 기존 비상 알람",
-          "rankReason": "관련 생산분 검사 25개 중 3개 불량으로 품질 영향 기준을 충족했습니다.",
+          "rankReason": "관련 생산분 검사에서 품질 영향 기준(3%)을 충족했습니다.",
           "operation": {
             "status": "inspecting",
             "alarmState": "active",
             "dataState": "available",
-            "since": "2026-02-03T13:58:00Z",
+            "since": "2026-02-03T04:58:00Z",
             "startedBy": {
               "id": "DEMO-INSPECTOR",
               "name": "시연 점검자"
@@ -508,7 +500,7 @@
             "metric": "injectionPressure",
             "label": "사출 압력",
             "unit": "MPa",
-            "value": 84.02080000000001,
+            "value": 77.3167,
             "reference": 89.0,
             "band": null,
             "alarmLimits": {
@@ -518,18 +510,1083 @@
             "marks": [
               {
                 "kind": "firstWarning",
-                "at": "2026-02-03T13:26:00Z"
+                "at": "2026-02-03T04:26:00Z"
               },
               {
                 "kind": "firstAlarm",
-                "at": "2026-02-03T13:33:00Z"
+                "at": "2026-02-03T04:33:00Z"
+              }
+            ]
+          },
+          "investigation": null
+        }
+      ],
+      "warning": [
+        {
+          "incidentId": "IG-0015",
+          "equipment": {
+            "id": "EQP-003",
+            "no": "3호기",
+            "part": "뚜껑"
+          },
+          "revision": 2,
+          "workVersion": 1,
+          "status": "open",
+          "group": "warning",
+          "grade": 4,
+          "rank": 1,
+          "previousGrade": null,
+          "detectedAt": "2026-02-03T04:41:00Z",
+          "headline": "배럴 온도 상승 · 이상 예고",
+          "rankReason": "관련 생산분 검사 결과가 품질 영향 기준(3%) 미만입니다.",
+          "operation": {
+            "status": "running",
+            "alarmState": "inactive",
+            "dataState": "available",
+            "since": null,
+            "startedBy": null
+          },
+          "quality": {
+            "impact": "no",
+            "lotIds": [
+              "CP-0076"
+            ],
+            "inspected": 19,
+            "defects": 0,
+            "defectRate": 0.0,
+            "thresholdRate": 0.03
+          },
+          "firstCheck": {
+            "code": "BARREL_HEATING",
+            "label": "13:41의 배럴 온도 210.78°C를 기준과 대조하고 배럴 히터·열전대를 확인하세요.",
+            "source": "investigation",
+            "evidenceIds": [
+              "ES-012262"
+            ]
+          },
+          "signal": {
+            "metric": "barrelTemperature",
+            "label": "배럴 온도",
+            "unit": "°C",
+            "value": 212.42,
+            "reference": 209.0,
+            "band": null,
+            "alarmLimits": {
+              "lower": 204.0,
+              "upper": 214.0
+            },
+            "marks": [
+              {
+                "kind": "firstWarning",
+                "at": "2026-02-03T04:41:00Z"
+              }
+            ]
+          },
+          "investigation": {
+            "id": "INV-DEMO-003-WARNING",
+            "trigger": "newWarning",
+            "status": "completed",
+            "judgmentRevision": 2,
+            "failureCode": null
+          }
+        }
+      ],
+      "normal": [
+        {
+          "equipment": {
+            "id": "EQP-002",
+            "no": "2호기",
+            "part": "속뚜껑"
+          },
+          "operation": {
+            "status": "running",
+            "alarmState": "inactive",
+            "dataState": "available",
+            "since": null,
+            "startedBy": null
+          }
+        },
+        {
+          "equipment": {
+            "id": "EQP-004",
+            "no": "4호기",
+            "part": "속뚜껑"
+          },
+          "operation": {
+            "status": "running",
+            "alarmState": "inactive",
+            "dataState": "available",
+            "since": null,
+            "startedBy": null
+          }
+        },
+        {
+          "equipment": {
+            "id": "EQP-005",
+            "no": "5호기",
+            "part": "용기 몸체"
+          },
+          "operation": {
+            "status": "running",
+            "alarmState": "inactive",
+            "dataState": "available",
+            "since": null,
+            "startedBy": null
+          }
+        },
+        {
+          "equipment": {
+            "id": "EQP-006",
+            "no": "6호기",
+            "part": "용기 몸체"
+          },
+          "operation": {
+            "status": "running",
+            "alarmState": "inactive",
+            "dataState": "available",
+            "since": null,
+            "startedBy": null
+          }
+        },
+        {
+          "equipment": {
+            "id": "EQP-007",
+            "no": "7호기",
+            "part": "뚜껑"
+          },
+          "operation": {
+            "status": "running",
+            "alarmState": "inactive",
+            "dataState": "available",
+            "since": null,
+            "startedBy": null
+          }
+        },
+        {
+          "equipment": {
+            "id": "EQP-008",
+            "no": "8호기",
+            "part": "속뚜껑"
+          },
+          "operation": {
+            "status": "running",
+            "alarmState": "inactive",
+            "dataState": "available",
+            "since": null,
+            "startedBy": null
+          }
+        },
+        {
+          "equipment": {
+            "id": "EQP-009",
+            "no": "9호기",
+            "part": "뚜껑"
+          },
+          "operation": {
+            "status": "running",
+            "alarmState": "inactive",
+            "dataState": "available",
+            "since": null,
+            "startedBy": null
+          }
+        },
+        {
+          "equipment": {
+            "id": "EQP-010",
+            "no": "10호기",
+            "part": "뚜껑"
+          },
+          "operation": {
+            "status": "running",
+            "alarmState": "inactive",
+            "dataState": "available",
+            "since": null,
+            "startedBy": null
+          }
+        }
+      ],
+      "unavailable": []
+    },
+    "incident": {
+      "incidentId": "IG-0015",
+      "equipment": {
+        "id": "EQP-003",
+        "no": "3호기",
+        "part": "뚜껑"
+      },
+      "detectedAt": "2026-02-03T04:41:00Z",
+      "judgment": {
+        "revision": 2,
+        "group": "warning",
+        "grade": 4,
+        "rank": 1,
+        "previousGrade": null,
+        "quality": {
+          "impact": "no",
+          "lotIds": [
+            "CP-0076"
+          ],
+          "inspected": 19,
+          "defects": 0,
+          "defectRate": 0.0,
+          "thresholdRate": 0.03
+        },
+        "asOf": "2026-02-03T05:00:00Z",
+        "reason": "관련 생산분 검사 결과가 품질 영향 기준(3%) 미만입니다."
+      },
+      "revisions": [
+        {
+          "revision": 2,
+          "group": "warning",
+          "grade": 4,
+          "rank": 1,
+          "previousGrade": null,
+          "quality": {
+            "impact": "no",
+            "lotIds": [
+              "CP-0076"
+            ],
+            "inspected": 19,
+            "defects": 0,
+            "defectRate": 0.0,
+            "thresholdRate": 0.03
+          },
+          "asOf": "2026-02-03T05:00:00Z",
+          "reason": "관련 생산분 검사 결과가 품질 영향 기준(3%) 미만입니다."
+        },
+        {
+          "revision": 1,
+          "group": "warning",
+          "grade": 4,
+          "rank": 1,
+          "previousGrade": null,
+          "quality": {
+            "impact": null,
+            "lotIds": [
+              "CP-0076"
+            ],
+            "inspected": null,
+            "defects": null,
+            "defectRate": null,
+            "thresholdRate": 0.03
+          },
+          "asOf": "2026-02-03T04:41:00Z",
+          "reason": "관련 생산분의 품질 영향은 미확인입니다."
+        }
+      ],
+      "evidence": [
+        {
+          "id": "CP-0076",
+          "kind": "lot",
+          "basis": "record",
+          "title": "생산 LOT CP-0076",
+          "detail": "EQP-003에서 13:30부터 생산된 뚜껑 LOT.",
+          "observedAt": "2026-02-03T04:30:00Z"
+        },
+        {
+          "id": "ES-012281",
+          "kind": "sensor",
+          "basis": "record",
+          "title": "배럴 온도 관측",
+          "detail": "14:00 212.42°C / 기존 알람 상한 214.0°C.",
+          "observedAt": "2026-02-03T05:00:00Z"
+        },
+        {
+          "id": "EV-QC-1400",
+          "kind": "inspection",
+          "basis": "record",
+          "title": "연결 생산분 검사 집계",
+          "detail": "검수 19개 중 불량 0건.",
+          "observedAt": "2026-02-03T05:00:00Z"
+        },
+        {
+          "id": "ES-012262",
+          "kind": "sensor",
+          "basis": "record",
+          "title": "첫 예고 시점의 배럴 온도",
+          "detail": "13:41 배럴 온도 210.78°C.",
+          "observedAt": "2026-02-03T04:41:00Z"
+        }
+      ],
+      "checklist": [
+        {
+          "code": "BARREL_HEATING",
+          "label": "13:41의 배럴 온도 210.78°C를 기준과 대조하고 배럴 히터·열전대를 확인하세요.",
+          "source": "investigation",
+          "evidenceIds": [
+            "ES-012262"
+          ]
+        },
+        {
+          "code": "BARREL_HEATING",
+          "label": "배럴 히터·열전대 확인",
+          "source": "baseline",
+          "evidenceIds": []
+        }
+      ],
+      "signal": {
+        "metric": "barrelTemperature",
+        "label": "배럴 온도",
+        "unit": "°C",
+        "value": 212.42,
+        "reference": 209.0,
+        "band": null,
+        "alarmLimits": {
+          "lower": 204.0,
+          "upper": 214.0
+        },
+        "marks": [
+          {
+            "kind": "firstWarning",
+            "at": "2026-02-03T04:41:00Z"
+          }
+        ]
+      },
+      "zones": [
+        "barrel"
+      ],
+      "defectTypes": [],
+      "operation": {
+        "status": "running",
+        "alarmState": "inactive",
+        "dataState": "available",
+        "since": null,
+        "startedBy": null
+      },
+      "work": {
+        "status": "open",
+        "workVersion": 1,
+        "allowedActions": [
+          "start",
+          "reject",
+          "hold"
+        ],
+        "startedAt": null,
+        "startedBy": null,
+        "startedRevision": null,
+        "decisions": [],
+        "result": null
+      },
+      "investigation": {
+        "id": "INV-DEMO-003-WARNING",
+        "trigger": "newWarning",
+        "status": "completed",
+        "judgmentRevision": 2,
+        "failureCode": null
+      }
+    }
+  },
+  "afterInspection1405": {
+    "board": {
+      "boardId": "BOARD-DEMO-1",
+      "snapshotVersion": 3,
+      "asOf": "2026-02-03T05:05:00Z",
+      "displayTimeZone": "Asia/Seoul",
+      "notificationCursor": "N-V8-1405",
+      "replay": {
+        "currentAt": "2026-02-03T05:05:00Z",
+        "step": 3,
+        "hasNext": true
+      },
+      "summary": {
+        "emergencyCount": 3,
+        "warningCount": 1,
+        "normalCount": 6,
+        "unavailableCount": 0,
+        "qualityLinkedCount": 2,
+        "workCounts": {
+          "open": 3,
+          "inProgress": 1,
+          "onHold": 0,
+          "rejected": 0,
+          "done": 0
+        },
+        "firstIncidentId": "IG-0016",
+        "nextIncidentIds": [
+          "IG-0017",
+          "IG-0015"
+        ],
+        "qualityLots": [
+          {
+            "lotId": "BD-0056",
+            "incidentId": "IG-0014",
+            "suggestion": "reviewContainment"
+          },
+          {
+            "lotId": "IL-0055",
+            "incidentId": "IG-0016",
+            "suggestion": "awaitInspection"
+          },
+          {
+            "lotId": "IL-0057",
+            "incidentId": "IG-0017",
+            "suggestion": "awaitInspection"
+          },
+          {
+            "lotId": "CP-0076",
+            "incidentId": "IG-0015",
+            "suggestion": "reviewContainment"
+          }
+        ]
+      },
+      "emergency": [
+        {
+          "incidentId": "IG-0014",
+          "equipment": {
+            "id": "EQP-001",
+            "no": "1호기",
+            "part": "용기 몸체"
+          },
+          "revision": 2,
+          "workVersion": 2,
+          "status": "inProgress",
+          "group": "emergency",
+          "grade": 1,
+          "rank": 1,
+          "previousGrade": 2,
+          "detectedAt": "2026-02-03T04:26:00Z",
+          "headline": "사출 압력 · 기존 비상 알람",
+          "rankReason": "관련 생산분 검사에서 품질 영향 기준(3%)을 충족했습니다.",
+          "operation": {
+            "status": "inspecting",
+            "alarmState": "active",
+            "dataState": "available",
+            "since": "2026-02-03T04:58:00Z",
+            "startedBy": {
+              "id": "DEMO-INSPECTOR",
+              "name": "시연 점검자"
+            }
+          },
+          "quality": {
+            "impact": "yes",
+            "lotIds": [
+              "BD-0056"
+            ],
+            "inspected": 25,
+            "defects": 3,
+            "defectRate": 0.12,
+            "thresholdRate": 0.03
+          },
+          "firstCheck": {
+            "code": "PRESSURE_CHECK",
+            "label": "사출 압력·유압 회로 확인",
+            "source": "baseline",
+            "evidenceIds": []
+          },
+          "signal": {
+            "metric": "injectionPressure",
+            "label": "사출 압력",
+            "unit": "MPa",
+            "value": 77.778,
+            "reference": 89.0,
+            "band": null,
+            "alarmLimits": {
+              "lower": 80.1,
+              "upper": 97.9
+            },
+            "marks": [
+              {
+                "kind": "firstWarning",
+                "at": "2026-02-03T04:26:00Z"
+              },
+              {
+                "kind": "firstAlarm",
+                "at": "2026-02-03T04:33:00Z"
               }
             ]
           },
           "investigation": null
         },
         {
-          "incidentId": "INC-DEMO-003",
+          "incidentId": "IG-0016",
+          "equipment": {
+            "id": "EQP-002",
+            "no": "2호기",
+            "part": "속뚜껑"
+          },
+          "revision": 1,
+          "workVersion": 1,
+          "status": "open",
+          "group": "emergency",
+          "grade": 2,
+          "rank": 2,
+          "previousGrade": null,
+          "detectedAt": "2026-02-03T05:04:00Z",
+          "headline": "사출 압력 · 기존 비상 알람",
+          "rankReason": "관련 생산분의 품질 영향은 미확인입니다.",
+          "operation": {
+            "status": "alarm",
+            "alarmState": "active",
+            "dataState": "available",
+            "since": "2026-02-03T05:04:00Z",
+            "startedBy": null
+          },
+          "quality": {
+            "impact": null,
+            "lotIds": [
+              "IL-0055"
+            ],
+            "inspected": null,
+            "defects": null,
+            "defectRate": null,
+            "thresholdRate": 0.03
+          },
+          "firstCheck": {
+            "code": "PRESSURE_CHECK",
+            "label": "사출 압력·유압 회로 확인",
+            "source": "baseline",
+            "evidenceIds": []
+          },
+          "signal": {
+            "metric": "injectionPressure",
+            "label": "사출 압력",
+            "unit": "MPa",
+            "value": 73.1022,
+            "reference": 82.4,
+            "band": null,
+            "alarmLimits": {
+              "lower": 74.16,
+              "upper": 90.64
+            },
+            "marks": [
+              {
+                "kind": "firstAlarm",
+                "at": "2026-02-03T05:04:00Z"
+              }
+            ]
+          },
+          "investigation": null
+        },
+        {
+          "incidentId": "IG-0017",
+          "equipment": {
+            "id": "EQP-004",
+            "no": "4호기",
+            "part": "속뚜껑"
+          },
+          "revision": 1,
+          "workVersion": 1,
+          "status": "open",
+          "group": "emergency",
+          "grade": 2,
+          "rank": 3,
+          "previousGrade": null,
+          "detectedAt": "2026-02-03T05:04:00Z",
+          "headline": "스크류 회전수 · 기존 비상 알람",
+          "rankReason": "관련 생산분의 품질 영향은 미확인입니다.",
+          "operation": {
+            "status": "alarm",
+            "alarmState": "active",
+            "dataState": "available",
+            "since": "2026-02-03T05:04:00Z",
+            "startedBy": null
+          },
+          "quality": {
+            "impact": null,
+            "lotIds": [
+              "IL-0057"
+            ],
+            "inspected": null,
+            "defects": null,
+            "defectRate": null,
+            "thresholdRate": 0.03
+          },
+          "firstCheck": {
+            "code": "SCREW_DRIVE",
+            "label": "스크류 구동부·모터 확인",
+            "source": "baseline",
+            "evidenceIds": []
+          },
+          "signal": {
+            "metric": "screwSpeed",
+            "label": "스크류 회전수",
+            "unit": "rpm",
+            "value": 54.8,
+            "reference": 89.5,
+            "band": null,
+            "alarmLimits": {
+              "lower": 76.1,
+              "upper": 102.9
+            },
+            "marks": [
+              {
+                "kind": "firstAlarm",
+                "at": "2026-02-03T05:04:00Z"
+              }
+            ]
+          },
+          "investigation": null
+        }
+      ],
+      "warning": [
+        {
+          "incidentId": "IG-0015",
+          "equipment": {
+            "id": "EQP-003",
+            "no": "3호기",
+            "part": "뚜껑"
+          },
+          "revision": 3,
+          "workVersion": 1,
+          "status": "open",
+          "group": "warning",
+          "grade": 3,
+          "rank": 1,
+          "previousGrade": 4,
+          "detectedAt": "2026-02-03T04:41:00Z",
+          "headline": "배럴 온도 상승 · 이상 예고",
+          "rankReason": "관련 생산분 검사에서 품질 영향 기준(3%)을 충족했습니다.",
+          "operation": {
+            "status": "running",
+            "alarmState": "inactive",
+            "dataState": "available",
+            "since": null,
+            "startedBy": null
+          },
+          "quality": {
+            "impact": "yes",
+            "lotIds": [
+              "CP-0076"
+            ],
+            "inspected": 24,
+            "defects": 1,
+            "defectRate": 0.041666666666666664,
+            "thresholdRate": 0.03
+          },
+          "firstCheck": {
+            "code": "BARREL_HEATING",
+            "label": "13:41의 배럴 온도 210.78°C를 기준과 대조하고 배럴 히터·열전대를 확인하세요.",
+            "source": "investigation",
+            "evidenceIds": [
+              "ES-012262"
+            ]
+          },
+          "signal": {
+            "metric": "barrelTemperature",
+            "label": "배럴 온도",
+            "unit": "°C",
+            "value": 212.54,
+            "reference": 209.0,
+            "band": null,
+            "alarmLimits": {
+              "lower": 204.0,
+              "upper": 214.0
+            },
+            "marks": [
+              {
+                "kind": "firstWarning",
+                "at": "2026-02-03T04:41:00Z"
+              }
+            ]
+          },
+          "investigation": {
+            "id": "INV-DEMO-003-WARNING",
+            "trigger": "newWarning",
+            "status": "completed",
+            "judgmentRevision": 3,
+            "failureCode": null
+          }
+        }
+      ],
+      "normal": [
+        {
+          "equipment": {
+            "id": "EQP-005",
+            "no": "5호기",
+            "part": "용기 몸체"
+          },
+          "operation": {
+            "status": "running",
+            "alarmState": "inactive",
+            "dataState": "available",
+            "since": null,
+            "startedBy": null
+          }
+        },
+        {
+          "equipment": {
+            "id": "EQP-006",
+            "no": "6호기",
+            "part": "용기 몸체"
+          },
+          "operation": {
+            "status": "running",
+            "alarmState": "inactive",
+            "dataState": "available",
+            "since": null,
+            "startedBy": null
+          }
+        },
+        {
+          "equipment": {
+            "id": "EQP-007",
+            "no": "7호기",
+            "part": "뚜껑"
+          },
+          "operation": {
+            "status": "running",
+            "alarmState": "inactive",
+            "dataState": "available",
+            "since": null,
+            "startedBy": null
+          }
+        },
+        {
+          "equipment": {
+            "id": "EQP-008",
+            "no": "8호기",
+            "part": "속뚜껑"
+          },
+          "operation": {
+            "status": "running",
+            "alarmState": "inactive",
+            "dataState": "available",
+            "since": null,
+            "startedBy": null
+          }
+        },
+        {
+          "equipment": {
+            "id": "EQP-009",
+            "no": "9호기",
+            "part": "뚜껑"
+          },
+          "operation": {
+            "status": "running",
+            "alarmState": "inactive",
+            "dataState": "available",
+            "since": null,
+            "startedBy": null
+          }
+        },
+        {
+          "equipment": {
+            "id": "EQP-010",
+            "no": "10호기",
+            "part": "뚜껑"
+          },
+          "operation": {
+            "status": "running",
+            "alarmState": "inactive",
+            "dataState": "available",
+            "since": null,
+            "startedBy": null
+          }
+        }
+      ],
+      "unavailable": []
+    },
+    "incident": {
+      "incidentId": "IG-0015",
+      "equipment": {
+        "id": "EQP-003",
+        "no": "3호기",
+        "part": "뚜껑"
+      },
+      "detectedAt": "2026-02-03T04:41:00Z",
+      "judgment": {
+        "revision": 3,
+        "group": "warning",
+        "grade": 3,
+        "rank": 1,
+        "previousGrade": 4,
+        "quality": {
+          "impact": "yes",
+          "lotIds": [
+            "CP-0076"
+          ],
+          "inspected": 24,
+          "defects": 1,
+          "defectRate": 0.041666666666666664,
+          "thresholdRate": 0.03
+        },
+        "asOf": "2026-02-03T05:05:00Z",
+        "reason": "관련 생산분 검사에서 품질 영향 기준(3%)을 충족했습니다."
+      },
+      "revisions": [
+        {
+          "revision": 3,
+          "group": "warning",
+          "grade": 3,
+          "rank": 1,
+          "previousGrade": 4,
+          "quality": {
+            "impact": "yes",
+            "lotIds": [
+              "CP-0076"
+            ],
+            "inspected": 24,
+            "defects": 1,
+            "defectRate": 0.041666666666666664,
+            "thresholdRate": 0.03
+          },
+          "asOf": "2026-02-03T05:05:00Z",
+          "reason": "관련 생산분 검사에서 품질 영향 기준(3%)을 충족했습니다."
+        },
+        {
+          "revision": 2,
+          "group": "warning",
+          "grade": 4,
+          "rank": 1,
+          "previousGrade": null,
+          "quality": {
+            "impact": "no",
+            "lotIds": [
+              "CP-0076"
+            ],
+            "inspected": 19,
+            "defects": 0,
+            "defectRate": 0.0,
+            "thresholdRate": 0.03
+          },
+          "asOf": "2026-02-03T05:00:00Z",
+          "reason": "관련 생산분 검사 결과가 품질 영향 기준(3%) 미만입니다."
+        },
+        {
+          "revision": 1,
+          "group": "warning",
+          "grade": 4,
+          "rank": 1,
+          "previousGrade": null,
+          "quality": {
+            "impact": null,
+            "lotIds": [
+              "CP-0076"
+            ],
+            "inspected": null,
+            "defects": null,
+            "defectRate": null,
+            "thresholdRate": 0.03
+          },
+          "asOf": "2026-02-03T04:41:00Z",
+          "reason": "관련 생산분의 품질 영향은 미확인입니다."
+        }
+      ],
+      "evidence": [
+        {
+          "id": "CP-0076",
+          "kind": "lot",
+          "basis": "record",
+          "title": "생산 LOT CP-0076",
+          "detail": "EQP-003에서 13:30부터 생산된 뚜껑 LOT.",
+          "observedAt": "2026-02-03T04:30:00Z"
+        },
+        {
+          "id": "ES-012286",
+          "kind": "sensor",
+          "basis": "record",
+          "title": "배럴 온도 관측",
+          "detail": "14:05 212.54°C / 기존 알람 상한 214.0°C.",
+          "observedAt": "2026-02-03T05:05:00Z"
+        },
+        {
+          "id": "EV-QC-1405",
+          "kind": "inspection",
+          "basis": "record",
+          "title": "연결 생산분 검사 집계",
+          "detail": "검수 24개 중 불량 1건.",
+          "observedAt": "2026-02-03T05:05:00Z"
+        },
+        {
+          "id": "IR-022795",
+          "kind": "inspection",
+          "basis": "record",
+          "title": "표면결함 검사 기록",
+          "detail": "CP-0076 제품 순번 34에서 표면결함 1건.",
+          "observedAt": "2026-02-03T05:04:00Z"
+        },
+        {
+          "id": "ES-012262",
+          "kind": "sensor",
+          "basis": "record",
+          "title": "첫 예고 시점의 배럴 온도",
+          "detail": "13:41 배럴 온도 210.78°C.",
+          "observedAt": "2026-02-03T04:41:00Z"
+        }
+      ],
+      "checklist": [
+        {
+          "code": "BARREL_HEATING",
+          "label": "13:41의 배럴 온도 210.78°C를 기준과 대조하고 배럴 히터·열전대를 확인하세요.",
+          "source": "investigation",
+          "evidenceIds": [
+            "ES-012262"
+          ]
+        },
+        {
+          "code": "BARREL_HEATING",
+          "label": "배럴 히터·열전대 확인",
+          "source": "baseline",
+          "evidenceIds": []
+        }
+      ],
+      "signal": {
+        "metric": "barrelTemperature",
+        "label": "배럴 온도",
+        "unit": "°C",
+        "value": 212.54,
+        "reference": 209.0,
+        "band": null,
+        "alarmLimits": {
+          "lower": 204.0,
+          "upper": 214.0
+        },
+        "marks": [
+          {
+            "kind": "firstWarning",
+            "at": "2026-02-03T04:41:00Z"
+          }
+        ]
+      },
+      "zones": [
+        "barrel"
+      ],
+      "defectTypes": [
+        "표면결함"
+      ],
+      "operation": {
+        "status": "running",
+        "alarmState": "inactive",
+        "dataState": "available",
+        "since": null,
+        "startedBy": null
+      },
+      "work": {
+        "status": "open",
+        "workVersion": 1,
+        "allowedActions": [
+          "start",
+          "reject",
+          "hold"
+        ],
+        "startedAt": null,
+        "startedBy": null,
+        "startedRevision": null,
+        "decisions": [],
+        "result": null
+      },
+      "investigation": {
+        "id": "INV-DEMO-003-WARNING",
+        "trigger": "newWarning",
+        "status": "completed",
+        "judgmentRevision": 3,
+        "failureCode": null
+      }
+    }
+  },
+  "alarmInvestigating1415": {
+    "board": {
+      "boardId": "BOARD-DEMO-1",
+      "snapshotVersion": 4,
+      "asOf": "2026-02-03T05:15:00Z",
+      "displayTimeZone": "Asia/Seoul",
+      "notificationCursor": "N-V8-1415",
+      "replay": {
+        "currentAt": "2026-02-03T05:15:00Z",
+        "step": 4,
+        "hasNext": false
+      },
+      "summary": {
+        "emergencyCount": 4,
+        "warningCount": 0,
+        "normalCount": 6,
+        "unavailableCount": 0,
+        "qualityLinkedCount": 2,
+        "workCounts": {
+          "open": 3,
+          "inProgress": 1,
+          "onHold": 0,
+          "rejected": 0,
+          "done": 0
+        },
+        "firstIncidentId": "IG-0015",
+        "nextIncidentIds": [
+          "IG-0016",
+          "IG-0017"
+        ],
+        "qualityLots": [
+          {
+            "lotId": "BD-0056",
+            "incidentId": "IG-0014",
+            "suggestion": "reviewContainment"
+          },
+          {
+            "lotId": "CP-0076",
+            "incidentId": "IG-0015",
+            "suggestion": "reviewContainment"
+          }
+        ]
+      },
+      "emergency": [
+        {
+          "incidentId": "IG-0014",
+          "equipment": {
+            "id": "EQP-001",
+            "no": "1호기",
+            "part": "용기 몸체"
+          },
+          "revision": 2,
+          "workVersion": 2,
+          "status": "inProgress",
+          "group": "emergency",
+          "grade": 1,
+          "rank": 1,
+          "previousGrade": 2,
+          "detectedAt": "2026-02-03T04:26:00Z",
+          "headline": "사출 압력 · 기존 비상 알람",
+          "rankReason": "관련 생산분 검사에서 품질 영향 기준(3%)을 충족했습니다.",
+          "operation": {
+            "status": "inspecting",
+            "alarmState": "active",
+            "dataState": "available",
+            "since": "2026-02-03T04:58:00Z",
+            "startedBy": {
+              "id": "DEMO-INSPECTOR",
+              "name": "시연 점검자"
+            }
+          },
+          "quality": {
+            "impact": "yes",
+            "lotIds": [
+              "BD-0056"
+            ],
+            "inspected": 25,
+            "defects": 3,
+            "defectRate": 0.12,
+            "thresholdRate": 0.03
+          },
+          "firstCheck": {
+            "code": "PRESSURE_CHECK",
+            "label": "사출 압력·유압 회로 확인",
+            "source": "baseline",
+            "evidenceIds": []
+          },
+          "signal": {
+            "metric": "injectionPressure",
+            "label": "사출 압력",
+            "unit": "MPa",
+            "value": 85.8657,
+            "reference": 89.0,
+            "band": null,
+            "alarmLimits": {
+              "lower": 80.1,
+              "upper": 97.9
+            },
+            "marks": [
+              {
+                "kind": "firstWarning",
+                "at": "2026-02-03T04:26:00Z"
+              },
+              {
+                "kind": "firstAlarm",
+                "at": "2026-02-03T04:33:00Z"
+              }
+            ]
+          },
+          "investigation": null
+        },
+        {
+          "incidentId": "IG-0015",
           "equipment": {
             "id": "EQP-003",
             "no": "3호기",
@@ -542,14 +1599,14 @@
           "grade": 1,
           "rank": 2,
           "previousGrade": 3,
-          "detectedAt": "2026-02-03T13:41:00Z",
-          "headline": "배럴 온도 · 기존 비상 알람",
-          "rankReason": "관련 생산분 검사 34개 중 2개 불량으로 품질 영향 기준을 충족했습니다.",
+          "detectedAt": "2026-02-03T04:41:00Z",
+          "headline": "배럴 온도 상승 · 기존 센서 알람",
+          "rankReason": "관련 생산분 검사에서 품질 영향 기준(3%)을 충족했습니다.",
           "operation": {
             "status": "alarm",
             "alarmState": "active",
             "dataState": "available",
-            "since": "2026-02-03T14:15:00Z",
+            "since": "2026-02-03T05:15:00Z",
             "startedBy": null
           },
           "quality": {
@@ -572,7 +1629,7 @@
             "metric": "barrelTemperature",
             "label": "배럴 온도",
             "unit": "°C",
-            "value": 214.45,
+            "value": 214.27,
             "reference": 209.0,
             "band": null,
             "alarmLimits": {
@@ -582,11 +1639,11 @@
             "marks": [
               {
                 "kind": "firstWarning",
-                "at": "2026-02-03T13:41:00Z"
+                "at": "2026-02-03T04:41:00Z"
               },
               {
                 "kind": "firstAlarm",
-                "at": "2026-02-03T14:15:00Z"
+                "at": "2026-02-03T05:15:00Z"
               }
             ]
           },
@@ -599,27 +1656,27 @@
           }
         },
         {
-          "incidentId": "INC-DEMO-002",
+          "incidentId": "IG-0016",
           "equipment": {
             "id": "EQP-002",
             "no": "2호기",
             "part": "속뚜껑"
           },
-          "revision": 2,
+          "revision": 1,
           "workVersion": 1,
           "status": "open",
           "group": "emergency",
           "grade": 2,
           "rank": 3,
           "previousGrade": null,
-          "detectedAt": "2026-02-03T14:04:00Z",
+          "detectedAt": "2026-02-03T05:04:00Z",
           "headline": "사출 압력 · 기존 비상 알람",
-          "rankReason": "관련 생산분 검사 10개 중 0개 불량으로 품질 영향 기준 미만입니다.",
+          "rankReason": "관련 생산분 검사 결과가 품질 영향 기준(3%) 미만입니다.",
           "operation": {
             "status": "alarm",
             "alarmState": "active",
             "dataState": "available",
-            "since": "2026-02-03T14:04:00Z",
+            "since": "2026-02-03T05:04:00Z",
             "startedBy": null
           },
           "quality": {
@@ -642,7 +1699,7 @@
             "metric": "injectionPressure",
             "label": "사출 압력",
             "unit": "MPa",
-            "value": 73.031,
+            "value": 72.3574,
             "reference": 82.4,
             "band": null,
             "alarmLimits": {
@@ -651,39 +1708,35 @@
             },
             "marks": [
               {
-                "kind": "firstWarning",
-                "at": "2026-02-03T14:04:00Z"
-              },
-              {
                 "kind": "firstAlarm",
-                "at": "2026-02-03T14:04:00Z"
+                "at": "2026-02-03T05:04:00Z"
               }
             ]
           },
           "investigation": null
         },
         {
-          "incidentId": "INC-DEMO-004",
+          "incidentId": "IG-0017",
           "equipment": {
             "id": "EQP-004",
             "no": "4호기",
             "part": "속뚜껑"
           },
-          "revision": 2,
+          "revision": 1,
           "workVersion": 1,
           "status": "open",
           "group": "emergency",
           "grade": 2,
           "rank": 4,
           "previousGrade": null,
-          "detectedAt": "2026-02-03T14:04:00Z",
+          "detectedAt": "2026-02-03T05:04:00Z",
           "headline": "스크류 회전수 · 기존 비상 알람",
-          "rankReason": "관련 생산분 검사 10개 중 0개 불량으로 품질 영향 기준 미만입니다.",
+          "rankReason": "관련 생산분 검사 결과가 품질 영향 기준(3%) 미만입니다.",
           "operation": {
             "status": "alarm",
             "alarmState": "active",
             "dataState": "available",
-            "since": "2026-02-03T14:04:00Z",
+            "since": "2026-02-03T05:04:00Z",
             "startedBy": null
           },
           "quality": {
@@ -706,7 +1759,7 @@
             "metric": "screwSpeed",
             "label": "스크류 회전수",
             "unit": "rpm",
-            "value": 68.2,
+            "value": 55.2,
             "reference": 89.5,
             "band": null,
             "alarmLimits": {
@@ -715,12 +1768,8 @@
             },
             "marks": [
               {
-                "kind": "firstWarning",
-                "at": "2026-02-03T14:04:00Z"
-              },
-              {
                 "kind": "firstAlarm",
-                "at": "2026-02-03T14:04:00Z"
+                "at": "2026-02-03T05:04:00Z"
               }
             ]
           },
@@ -817,21 +1866,19 @@
       "unavailable": []
     },
     "incident": {
-      "incidentId": "INC-DEMO-003",
+      "incidentId": "IG-0015",
       "equipment": {
         "id": "EQP-003",
         "no": "3호기",
         "part": "뚜껑"
       },
-      "detectedAt": "2026-02-03T13:41:00Z",
+      "detectedAt": "2026-02-03T04:41:00Z",
       "judgment": {
         "revision": 4,
-        "asOf": "2026-02-03T14:15:00Z",
         "group": "emergency",
         "grade": 1,
         "rank": 2,
         "previousGrade": 3,
-        "reason": "관련 생산분 검사 34개 중 2개 불량으로 품질 영향 기준을 충족했습니다.",
         "quality": {
           "impact": "yes",
           "lotIds": [
@@ -841,17 +1888,17 @@
           "defects": 2,
           "defectRate": 0.058823529411764705,
           "thresholdRate": 0.03
-        }
+        },
+        "asOf": "2026-02-03T05:15:00Z",
+        "reason": "관련 생산분 검사에서 품질 영향 기준(3%)을 충족했습니다."
       },
       "revisions": [
         {
           "revision": 4,
-          "asOf": "2026-02-03T14:15:00Z",
           "group": "emergency",
           "grade": 1,
           "rank": 2,
           "previousGrade": 3,
-          "reason": "관련 생산분 검사 34개 중 2개 불량으로 품질 영향 기준을 충족했습니다.",
           "quality": {
             "impact": "yes",
             "lotIds": [
@@ -861,16 +1908,16 @@
             "defects": 2,
             "defectRate": 0.058823529411764705,
             "thresholdRate": 0.03
-          }
+          },
+          "asOf": "2026-02-03T05:15:00Z",
+          "reason": "관련 생산분 검사에서 품질 영향 기준(3%)을 충족했습니다."
         },
         {
           "revision": 3,
-          "asOf": "2026-02-03T14:05:00Z",
           "group": "warning",
           "grade": 3,
           "rank": 1,
           "previousGrade": 4,
-          "reason": "검사 24개 중 1개 불량으로 품질 영향 기준을 충족했습니다.",
           "quality": {
             "impact": "yes",
             "lotIds": [
@@ -880,16 +1927,16 @@
             "defects": 1,
             "defectRate": 0.041666666666666664,
             "thresholdRate": 0.03
-          }
+          },
+          "asOf": "2026-02-03T05:05:00Z",
+          "reason": "관련 생산분 검사에서 품질 영향 기준(3%)을 충족했습니다."
         },
         {
           "revision": 2,
-          "asOf": "2026-02-03T14:00:00Z",
           "group": "warning",
           "grade": 4,
           "rank": 1,
           "previousGrade": null,
-          "reason": "관련 생산분 검사 19개 중 0개 불량으로 품질 영향 기준 미만입니다.",
           "quality": {
             "impact": "no",
             "lotIds": [
@@ -897,18 +1944,18 @@
             ],
             "inspected": 19,
             "defects": 0,
-            "defectRate": 0,
+            "defectRate": 0.0,
             "thresholdRate": 0.03
-          }
+          },
+          "asOf": "2026-02-03T05:00:00Z",
+          "reason": "관련 생산분 검사 결과가 품질 영향 기준(3%) 미만입니다."
         },
         {
           "revision": 1,
-          "asOf": "2026-02-03T13:41:00Z",
           "group": "warning",
           "grade": 4,
           "rank": 1,
           "previousGrade": null,
-          "reason": "관련 생산분 품질 영향 미확인.",
           "quality": {
             "impact": null,
             "lotIds": [
@@ -918,41 +1965,67 @@
             "defects": null,
             "defectRate": null,
             "thresholdRate": 0.03
-          }
+          },
+          "asOf": "2026-02-03T04:41:00Z",
+          "reason": "관련 생산분의 품질 영향은 미확인입니다."
         }
       ],
       "evidence": [
         {
-          "id": "EV-003-1415-QC",
-          "kind": "inspection",
-          "basis": "record",
-          "title": "CP-0076 검사 결과",
-          "detail": "예고 이후 생산분 검사 34개 중 불량 2개. 표면결함은 14:04와 14:10에 기록.",
-          "observedAt": "2026-02-03T14:10:00Z"
-        },
-        {
-          "id": "EV-003-LOT",
+          "id": "CP-0076",
           "kind": "lot",
           "basis": "record",
           "title": "생산 LOT CP-0076",
-          "detail": "13:30부터 EQP-003에서 생산된 뚜껑 LOT.",
-          "observedAt": "2026-02-03T13:30:00Z"
+          "detail": "EQP-003에서 13:30부터 생산된 뚜껑 LOT.",
+          "observedAt": "2026-02-03T04:30:00Z"
         },
         {
-          "id": "EV-003-1415-TEMP",
+          "id": "ES-012296",
           "kind": "sensor",
           "basis": "record",
-          "title": "14:15 배럴 온도",
-          "detail": "214.45°C. 기존 알람 상한 214.0°C를 초과.",
-          "observedAt": "2026-02-03T14:15:00Z"
+          "title": "배럴 온도 관측",
+          "detail": "14:15 214.27°C / 기존 알람 상한 214.0°C.",
+          "observedAt": "2026-02-03T05:15:00Z"
         },
         {
-          "id": "EV-003-1415-ALARM",
+          "id": "ES-012262",
+          "kind": "sensor",
+          "basis": "record",
+          "title": "시나리오 예고 시점 배럴 온도",
+          "detail": "13:41 210.78°C.",
+          "observedAt": "2026-02-03T04:41:00Z"
+        },
+        {
+          "id": "ALARM-ES-012296",
           "kind": "alarm",
           "basis": "record",
           "title": "기존 온도 알람",
-          "detail": "TEMP_LIMIT 알람 수신.",
-          "observedAt": "2026-02-03T14:15:00Z"
+          "detail": "TEMP_LIMIT 최초 기록.",
+          "observedAt": "2026-02-03T05:15:00Z"
+        },
+        {
+          "id": "EV-QC-1415",
+          "kind": "inspection",
+          "basis": "record",
+          "title": "연결 생산분 검사 집계",
+          "detail": "검수 34개 중 불량 2건.",
+          "observedAt": "2026-02-03T05:15:00Z"
+        },
+        {
+          "id": "IR-022795",
+          "kind": "inspection",
+          "basis": "record",
+          "title": "표면결함 검사 기록",
+          "detail": "CP-0076 제품 순번 34에서 표면결함 1건.",
+          "observedAt": "2026-02-03T05:04:00Z"
+        },
+        {
+          "id": "IR-022837",
+          "kind": "inspection",
+          "basis": "record",
+          "title": "표면결함 검사 기록",
+          "detail": "CP-0076 제품 순번 40에서 표면결함 1건.",
+          "observedAt": "2026-02-03T05:10:00Z"
         }
       ],
       "checklist": [
@@ -967,7 +2040,7 @@
         "metric": "barrelTemperature",
         "label": "배럴 온도",
         "unit": "°C",
-        "value": 214.45,
+        "value": 214.27,
         "reference": 209.0,
         "band": null,
         "alarmLimits": {
@@ -977,11 +2050,11 @@
         "marks": [
           {
             "kind": "firstWarning",
-            "at": "2026-02-03T13:41:00Z"
+            "at": "2026-02-03T04:41:00Z"
           },
           {
             "kind": "firstAlarm",
-            "at": "2026-02-03T14:15:00Z"
+            "at": "2026-02-03T05:15:00Z"
           }
         ]
       },
@@ -995,7 +2068,7 @@
         "status": "alarm",
         "alarmState": "active",
         "dataState": "available",
-        "since": "2026-02-03T14:15:00Z",
+        "since": "2026-02-03T05:15:00Z",
         "startedBy": null
       },
       "work": {
@@ -1024,12 +2097,12 @@
   "alarmInvestigated1415": {
     "board": {
       "boardId": "BOARD-DEMO-1",
-      "snapshotVersion": 6,
-      "asOf": "2026-02-03T14:15:00Z",
-      "displayTimeZone": "UTC",
-      "notificationCursor": "N-DEMO-1415",
+      "snapshotVersion": 5,
+      "asOf": "2026-02-03T05:15:00Z",
+      "displayTimeZone": "Asia/Seoul",
+      "notificationCursor": "N-V8-1415",
       "replay": {
-        "currentAt": "2026-02-03T14:15:00Z",
+        "currentAt": "2026-02-03T05:15:00Z",
         "step": 4,
         "hasNext": false
       },
@@ -1046,27 +2119,27 @@
           "rejected": 0,
           "done": 0
         },
-        "firstIncidentId": "INC-DEMO-003",
+        "firstIncidentId": "IG-0015",
         "nextIncidentIds": [
-          "INC-DEMO-002",
-          "INC-DEMO-004"
+          "IG-0016",
+          "IG-0017"
         ],
         "qualityLots": [
           {
             "lotId": "BD-0056",
-            "incidentId": "INC-DEMO-001",
+            "incidentId": "IG-0014",
             "suggestion": "reviewContainment"
           },
           {
             "lotId": "CP-0076",
-            "incidentId": "INC-DEMO-003",
+            "incidentId": "IG-0015",
             "suggestion": "reviewContainment"
           }
         ]
       },
       "emergency": [
         {
-          "incidentId": "INC-DEMO-001",
+          "incidentId": "IG-0014",
           "equipment": {
             "id": "EQP-001",
             "no": "1호기",
@@ -1078,15 +2151,15 @@
           "group": "emergency",
           "grade": 1,
           "rank": 1,
-          "previousGrade": null,
-          "detectedAt": "2026-02-03T13:26:00Z",
+          "previousGrade": 2,
+          "detectedAt": "2026-02-03T04:26:00Z",
           "headline": "사출 압력 · 기존 비상 알람",
-          "rankReason": "관련 생산분 검사 25개 중 3개 불량으로 품질 영향 기준을 충족했습니다.",
+          "rankReason": "관련 생산분 검사에서 품질 영향 기준(3%)을 충족했습니다.",
           "operation": {
             "status": "inspecting",
             "alarmState": "active",
             "dataState": "available",
-            "since": "2026-02-03T13:58:00Z",
+            "since": "2026-02-03T04:58:00Z",
             "startedBy": {
               "id": "DEMO-INSPECTOR",
               "name": "시연 점검자"
@@ -1112,7 +2185,7 @@
             "metric": "injectionPressure",
             "label": "사출 압력",
             "unit": "MPa",
-            "value": 84.02080000000001,
+            "value": 85.8657,
             "reference": 89.0,
             "band": null,
             "alarmLimits": {
@@ -1122,18 +2195,18 @@
             "marks": [
               {
                 "kind": "firstWarning",
-                "at": "2026-02-03T13:26:00Z"
+                "at": "2026-02-03T04:26:00Z"
               },
               {
                 "kind": "firstAlarm",
-                "at": "2026-02-03T13:33:00Z"
+                "at": "2026-02-03T04:33:00Z"
               }
             ]
           },
           "investigation": null
         },
         {
-          "incidentId": "INC-DEMO-003",
+          "incidentId": "IG-0015",
           "equipment": {
             "id": "EQP-003",
             "no": "3호기",
@@ -1146,14 +2219,14 @@
           "grade": 1,
           "rank": 2,
           "previousGrade": 3,
-          "detectedAt": "2026-02-03T13:41:00Z",
-          "headline": "배럴 온도 · 기존 비상 알람",
-          "rankReason": "관련 생산분 검사 34개 중 2개 불량으로 품질 영향 기준을 충족했습니다.",
+          "detectedAt": "2026-02-03T04:41:00Z",
+          "headline": "배럴 온도 상승 · 기존 센서 알람",
+          "rankReason": "관련 생산분 검사에서 품질 영향 기준(3%)을 충족했습니다.",
           "operation": {
             "status": "alarm",
             "alarmState": "active",
             "dataState": "available",
-            "since": "2026-02-03T14:15:00Z",
+            "since": "2026-02-03T05:15:00Z",
             "startedBy": null
           },
           "quality": {
@@ -1168,20 +2241,21 @@
           },
           "firstCheck": {
             "code": "BARREL_HEATING",
-            "label": "13:41~14:15 배럴 온도 추이와 CP-0076의 14:04·14:10 표면결함 기록을 대조한 뒤, 배럴 히터·열전대를 확인하세요.",
+            "label": "13:41~14:15 배럴 온도 추이와 CP-0076의 14:04·14:10 표면결함 기록을 대조한 뒤 히터와 열전대를 확인하세요.",
             "source": "investigation",
             "evidenceIds": [
-              "EV-003-1341-TEMP",
-              "EV-003-1415-TEMP",
-              "EV-003-1415-QC",
-              "EV-003-LOT"
+              "ES-012262",
+              "ES-012296",
+              "IR-022795",
+              "IR-022837",
+              "CP-0076"
             ]
           },
           "signal": {
             "metric": "barrelTemperature",
             "label": "배럴 온도",
             "unit": "°C",
-            "value": 214.45,
+            "value": 214.27,
             "reference": 209.0,
             "band": null,
             "alarmLimits": {
@@ -1191,11 +2265,11 @@
             "marks": [
               {
                 "kind": "firstWarning",
-                "at": "2026-02-03T13:41:00Z"
+                "at": "2026-02-03T04:41:00Z"
               },
               {
                 "kind": "firstAlarm",
-                "at": "2026-02-03T14:15:00Z"
+                "at": "2026-02-03T05:15:00Z"
               }
             ]
           },
@@ -1208,27 +2282,27 @@
           }
         },
         {
-          "incidentId": "INC-DEMO-002",
+          "incidentId": "IG-0016",
           "equipment": {
             "id": "EQP-002",
             "no": "2호기",
             "part": "속뚜껑"
           },
-          "revision": 2,
+          "revision": 1,
           "workVersion": 1,
           "status": "open",
           "group": "emergency",
           "grade": 2,
           "rank": 3,
           "previousGrade": null,
-          "detectedAt": "2026-02-03T14:04:00Z",
+          "detectedAt": "2026-02-03T05:04:00Z",
           "headline": "사출 압력 · 기존 비상 알람",
-          "rankReason": "관련 생산분 검사 10개 중 0개 불량으로 품질 영향 기준 미만입니다.",
+          "rankReason": "관련 생산분 검사 결과가 품질 영향 기준(3%) 미만입니다.",
           "operation": {
             "status": "alarm",
             "alarmState": "active",
             "dataState": "available",
-            "since": "2026-02-03T14:04:00Z",
+            "since": "2026-02-03T05:04:00Z",
             "startedBy": null
           },
           "quality": {
@@ -1251,7 +2325,7 @@
             "metric": "injectionPressure",
             "label": "사출 압력",
             "unit": "MPa",
-            "value": 73.031,
+            "value": 72.3574,
             "reference": 82.4,
             "band": null,
             "alarmLimits": {
@@ -1260,39 +2334,35 @@
             },
             "marks": [
               {
-                "kind": "firstWarning",
-                "at": "2026-02-03T14:04:00Z"
-              },
-              {
                 "kind": "firstAlarm",
-                "at": "2026-02-03T14:04:00Z"
+                "at": "2026-02-03T05:04:00Z"
               }
             ]
           },
           "investigation": null
         },
         {
-          "incidentId": "INC-DEMO-004",
+          "incidentId": "IG-0017",
           "equipment": {
             "id": "EQP-004",
             "no": "4호기",
             "part": "속뚜껑"
           },
-          "revision": 2,
+          "revision": 1,
           "workVersion": 1,
           "status": "open",
           "group": "emergency",
           "grade": 2,
           "rank": 4,
           "previousGrade": null,
-          "detectedAt": "2026-02-03T14:04:00Z",
+          "detectedAt": "2026-02-03T05:04:00Z",
           "headline": "스크류 회전수 · 기존 비상 알람",
-          "rankReason": "관련 생산분 검사 10개 중 0개 불량으로 품질 영향 기준 미만입니다.",
+          "rankReason": "관련 생산분 검사 결과가 품질 영향 기준(3%) 미만입니다.",
           "operation": {
             "status": "alarm",
             "alarmState": "active",
             "dataState": "available",
-            "since": "2026-02-03T14:04:00Z",
+            "since": "2026-02-03T05:04:00Z",
             "startedBy": null
           },
           "quality": {
@@ -1315,7 +2385,7 @@
             "metric": "screwSpeed",
             "label": "스크류 회전수",
             "unit": "rpm",
-            "value": 68.2,
+            "value": 55.2,
             "reference": 89.5,
             "band": null,
             "alarmLimits": {
@@ -1324,12 +2394,8 @@
             },
             "marks": [
               {
-                "kind": "firstWarning",
-                "at": "2026-02-03T14:04:00Z"
-              },
-              {
                 "kind": "firstAlarm",
-                "at": "2026-02-03T14:04:00Z"
+                "at": "2026-02-03T05:04:00Z"
               }
             ]
           },
@@ -1426,21 +2492,19 @@
       "unavailable": []
     },
     "incident": {
-      "incidentId": "INC-DEMO-003",
+      "incidentId": "IG-0015",
       "equipment": {
         "id": "EQP-003",
         "no": "3호기",
         "part": "뚜껑"
       },
-      "detectedAt": "2026-02-03T13:41:00Z",
+      "detectedAt": "2026-02-03T04:41:00Z",
       "judgment": {
         "revision": 5,
-        "asOf": "2026-02-03T14:15:00Z",
         "group": "emergency",
         "grade": 1,
         "rank": 2,
         "previousGrade": 3,
-        "reason": "관련 생산분 검사 34개 중 2개 불량으로 품질 영향 기준을 충족했습니다.",
         "quality": {
           "impact": "yes",
           "lotIds": [
@@ -1450,17 +2514,17 @@
           "defects": 2,
           "defectRate": 0.058823529411764705,
           "thresholdRate": 0.03
-        }
+        },
+        "asOf": "2026-02-03T05:15:00Z",
+        "reason": "관련 생산분 검사에서 품질 영향 기준(3%)을 충족했습니다. 조사 근거와 점검 안내를 추가했습니다."
       },
       "revisions": [
         {
           "revision": 5,
-          "asOf": "2026-02-03T14:15:00Z",
           "group": "emergency",
           "grade": 1,
           "rank": 2,
           "previousGrade": 3,
-          "reason": "관련 생산분 검사 34개 중 2개 불량으로 품질 영향 기준을 충족했습니다.",
           "quality": {
             "impact": "yes",
             "lotIds": [
@@ -1470,16 +2534,16 @@
             "defects": 2,
             "defectRate": 0.058823529411764705,
             "thresholdRate": 0.03
-          }
+          },
+          "asOf": "2026-02-03T05:15:00Z",
+          "reason": "관련 생산분 검사에서 품질 영향 기준(3%)을 충족했습니다. 조사 근거와 점검 안내를 추가했습니다."
         },
         {
           "revision": 4,
-          "asOf": "2026-02-03T14:15:00Z",
           "group": "emergency",
           "grade": 1,
           "rank": 2,
           "previousGrade": 3,
-          "reason": "관련 생산분 검사 34개 중 2개 불량으로 품질 영향 기준을 충족했습니다.",
           "quality": {
             "impact": "yes",
             "lotIds": [
@@ -1489,16 +2553,16 @@
             "defects": 2,
             "defectRate": 0.058823529411764705,
             "thresholdRate": 0.03
-          }
+          },
+          "asOf": "2026-02-03T05:15:00Z",
+          "reason": "관련 생산분 검사에서 품질 영향 기준(3%)을 충족했습니다."
         },
         {
           "revision": 3,
-          "asOf": "2026-02-03T14:05:00Z",
           "group": "warning",
           "grade": 3,
           "rank": 1,
           "previousGrade": 4,
-          "reason": "검사 24개 중 1개 불량으로 품질 영향 기준을 충족했습니다.",
           "quality": {
             "impact": "yes",
             "lotIds": [
@@ -1508,16 +2572,16 @@
             "defects": 1,
             "defectRate": 0.041666666666666664,
             "thresholdRate": 0.03
-          }
+          },
+          "asOf": "2026-02-03T05:05:00Z",
+          "reason": "관련 생산분 검사에서 품질 영향 기준(3%)을 충족했습니다."
         },
         {
           "revision": 2,
-          "asOf": "2026-02-03T14:00:00Z",
           "group": "warning",
           "grade": 4,
           "rank": 1,
           "previousGrade": null,
-          "reason": "관련 생산분 검사 19개 중 0개 불량으로 품질 영향 기준 미만입니다.",
           "quality": {
             "impact": "no",
             "lotIds": [
@@ -1525,18 +2589,18 @@
             ],
             "inspected": 19,
             "defects": 0,
-            "defectRate": 0,
+            "defectRate": 0.0,
             "thresholdRate": 0.03
-          }
+          },
+          "asOf": "2026-02-03T05:00:00Z",
+          "reason": "관련 생산분 검사 결과가 품질 영향 기준(3%) 미만입니다."
         },
         {
           "revision": 1,
-          "asOf": "2026-02-03T13:41:00Z",
           "group": "warning",
           "grade": 4,
           "rank": 1,
           "previousGrade": null,
-          "reason": "관련 생산분 품질 영향 미확인.",
           "quality": {
             "impact": null,
             "lotIds": [
@@ -1546,61 +2610,80 @@
             "defects": null,
             "defectRate": null,
             "thresholdRate": 0.03
-          }
+          },
+          "asOf": "2026-02-03T04:41:00Z",
+          "reason": "관련 생산분의 품질 영향은 미확인입니다."
         }
       ],
       "evidence": [
         {
-          "id": "EV-003-1415-QC",
-          "kind": "inspection",
-          "basis": "record",
-          "title": "CP-0076 검사 결과",
-          "detail": "예고 이후 생산분 검사 34개 중 불량 2개. 표면결함은 14:04와 14:10에 기록.",
-          "observedAt": "2026-02-03T14:10:00Z"
-        },
-        {
-          "id": "EV-003-LOT",
+          "id": "CP-0076",
           "kind": "lot",
           "basis": "record",
           "title": "생산 LOT CP-0076",
-          "detail": "13:30부터 EQP-003에서 생산된 뚜껑 LOT.",
-          "observedAt": "2026-02-03T13:30:00Z"
+          "detail": "EQP-003에서 13:30부터 생산된 뚜껑 LOT.",
+          "observedAt": "2026-02-03T04:30:00Z"
         },
         {
-          "id": "EV-003-1341-TEMP",
+          "id": "ES-012296",
           "kind": "sensor",
           "basis": "record",
-          "title": "13:41 배럴 온도",
-          "detail": "210.03°C. 정상 기준 209.0°C, 알람 상한 214.0°C.",
-          "observedAt": "2026-02-03T13:41:00Z"
+          "title": "배럴 온도 관측",
+          "detail": "14:15 214.27°C / 기존 알람 상한 214.0°C.",
+          "observedAt": "2026-02-03T05:15:00Z"
         },
         {
-          "id": "EV-003-1415-TEMP",
+          "id": "ES-012262",
           "kind": "sensor",
           "basis": "record",
-          "title": "14:15 배럴 온도",
-          "detail": "214.45°C. 기존 알람 상한 214.0°C를 초과.",
-          "observedAt": "2026-02-03T14:15:00Z"
+          "title": "시나리오 예고 시점 배럴 온도",
+          "detail": "13:41 210.78°C.",
+          "observedAt": "2026-02-03T04:41:00Z"
         },
         {
-          "id": "EV-003-1415-ALARM",
+          "id": "ALARM-ES-012296",
           "kind": "alarm",
           "basis": "record",
           "title": "기존 온도 알람",
-          "detail": "TEMP_LIMIT 알람 수신.",
-          "observedAt": "2026-02-03T14:15:00Z"
+          "detail": "TEMP_LIMIT 최초 기록.",
+          "observedAt": "2026-02-03T05:15:00Z"
+        },
+        {
+          "id": "EV-QC-1415",
+          "kind": "inspection",
+          "basis": "record",
+          "title": "연결 생산분 검사 집계",
+          "detail": "검수 34개 중 불량 2건.",
+          "observedAt": "2026-02-03T05:15:00Z"
+        },
+        {
+          "id": "IR-022795",
+          "kind": "inspection",
+          "basis": "record",
+          "title": "표면결함 검사 기록",
+          "detail": "CP-0076 제품 순번 34에서 표면결함 1건.",
+          "observedAt": "2026-02-03T05:04:00Z"
+        },
+        {
+          "id": "IR-022837",
+          "kind": "inspection",
+          "basis": "record",
+          "title": "표면결함 검사 기록",
+          "detail": "CP-0076 제품 순번 40에서 표면결함 1건.",
+          "observedAt": "2026-02-03T05:10:00Z"
         }
       ],
       "checklist": [
         {
           "code": "BARREL_HEATING",
-          "label": "13:41~14:15 배럴 온도 추이와 CP-0076의 14:04·14:10 표면결함 기록을 대조한 뒤, 배럴 히터·열전대를 확인하세요.",
+          "label": "13:41~14:15 배럴 온도 추이와 CP-0076의 14:04·14:10 표면결함 기록을 대조한 뒤 히터와 열전대를 확인하세요.",
           "source": "investigation",
           "evidenceIds": [
-            "EV-003-1341-TEMP",
-            "EV-003-1415-TEMP",
-            "EV-003-1415-QC",
-            "EV-003-LOT"
+            "ES-012262",
+            "ES-012296",
+            "IR-022795",
+            "IR-022837",
+            "CP-0076"
           ]
         },
         {
@@ -1614,7 +2697,7 @@
         "metric": "barrelTemperature",
         "label": "배럴 온도",
         "unit": "°C",
-        "value": 214.45,
+        "value": 214.27,
         "reference": 209.0,
         "band": null,
         "alarmLimits": {
@@ -1624,11 +2707,11 @@
         "marks": [
           {
             "kind": "firstWarning",
-            "at": "2026-02-03T13:41:00Z"
+            "at": "2026-02-03T04:41:00Z"
           },
           {
             "kind": "firstAlarm",
-            "at": "2026-02-03T14:15:00Z"
+            "at": "2026-02-03T05:15:00Z"
           }
         ]
       },
@@ -1642,7 +2725,7 @@
         "status": "alarm",
         "alarmState": "active",
         "dataState": "available",
-        "since": "2026-02-03T14:15:00Z",
+        "since": "2026-02-03T05:15:00Z",
         "startedBy": null
       },
       "work": {

@@ -1,0 +1,60 @@
+name: qfirst-mvp
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: qfirst
+      POSTGRES_USER: qfirst
+      POSTGRES_PASSWORD: ${QFIRST_DB_PASSWORD:-qfirst-local-only}
+    ports: ["127.0.0.1:15432:5432"]
+    volumes: ["qfirst-db:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U qfirst -d qfirst"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+  agent:
+    build: ./agent
+    environment:
+      QFIRST_DATASET: /data
+      QFIRST_OLLAMA_URL: http://host.docker.internal:11434
+      QFIRST_MODEL: ${QFIRST_MODEL:-qwen3:4b}
+      QFIRST_DURABLE_WORKER: "1"
+      LANGSMITH_TRACING: "false"
+      LANGCHAIN_TRACING_V2: "false"
+    volumes:
+      - ${QFIRST_DATASET_PATH:-../qfirst-local/data/qfirst_dataset_v8}:/data:ro
+    extra_hosts: ["host.docker.internal:host-gateway"]
+    ports: ["127.0.0.1:18097:18094"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:18094/health')"]
+      interval: 5s
+      timeout: 3s
+      retries: 60
+    restart: unless-stopped
+  backend:
+    build: ./backend
+    environment:
+      SERVER_ADDRESS: 0.0.0.0
+      SERVER_PORT: 18091
+      QFIRST_DEMO_ENABLED: "true"
+      QFIRST_DATASET_PATH: /data
+      QFIRST_AGENT_URL: http://agent:18094
+      QFIRST_DB_URL: jdbc:postgresql://postgres:5432/qfirst
+      QFIRST_DB_USER: qfirst
+      QFIRST_DB_PASSWORD: ${QFIRST_DB_PASSWORD:-qfirst-local-only}
+    volumes:
+      - ${QFIRST_DATASET_PATH:-../qfirst-local/data/qfirst_dataset_v8}:/data:ro
+    ports: ["127.0.0.1:18096:18091"]
+    depends_on:
+      postgres: {condition: service_healthy}
+      agent: {condition: service_healthy}
+    restart: unless-stopped
+  frontend:
+    build: ./frontend
+    ports: ["127.0.0.1:18095:80"]
+    depends_on: [backend]
+    restart: unless-stopped
+volumes:
+  qfirst-db:

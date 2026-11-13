@@ -64,7 +64,7 @@ export function DetailModal({ id, onClose }: { id: string; onClose: () => void }
           </div>
           <ul className="divide-y divide-line rounded-lg border border-card-bd">
             {inc.evidence.map((e, i) => {
-              const derived = e.kind.includes('Q-First') || e.kind === '대조'
+              const derived = e.interpretation ?? (e.kind.includes('Q-First') || e.kind === '대조')
               return (
                 <li key={i} className={cx('grid grid-cols-[52px_76px_1fr_auto] items-baseline gap-3 px-4 py-2.5', e.id && linked.has(e.id) && 'bg-soft')}>
                   <span className="num text-[14px] text-sub">{e.at ?? ''}</span>
