@@ -3,7 +3,7 @@ import { getBoard } from '../api'
 import type { Board as BoardData, Incident, NormalEquipment, Snapshot } from '../api/types'
 import { useApp } from '../components/Shell'
 import { useLoad } from '../components/useLoad'
-import { AiTag, Card, EqpIcon, HalfDot, InvTag, MachineFigure, OpChip, Pill, QualityLine, Sparkline, TONE, cx, diffText, fmt, tone } from '../components/ui'
+import { AiTag, AutoSparkline, Card, EqpIcon, GradeWhy, HalfDot, InvTag, MachineFigure, OpChip, Pill, QualityLine, Sparkline, TONE, cx, diffText, fmt, tone } from '../components/ui'
 import { DetailModal } from './DetailModal'
 
 const FLASH = { emergency: 'shadow-[0_0_0_6px_var(--color-red-bg),0_0_0_8px_var(--color-red)]', warning: 'shadow-[0_0_0_6px_var(--color-blue-bg),0_0_0_8px_var(--color-blue)]' } as const
@@ -21,30 +21,30 @@ export default function Board() {
   if (!data) return <p className="p-6 text-mute">불러오는 중…</p>
   const notice = news ? noticeOf(data, snap) : null
   return (
-    <main className="flex flex-col gap-4 px-6 pb-10 pt-4">
+    <main className="flex flex-col gap-4 px-4 pb-10 pt-4 sm:px-6">
       {notice && (
-        <div role="status" className={cx('flex items-center gap-3 rounded-xl border-2 px-5 py-3', notice.box)}>
+        <div role="status" className={cx('flex flex-wrap items-center gap-3 rounded-xl border-2 px-4 py-3 sm:px-5', notice.box)}>
           <span aria-hidden="true" className="text-[18px]">🔔</span>
-          <p className="text-[15px]"><b className="num">{data.asOf}</b> {notice.text}</p>
-          <button onClick={() => { setOpen(notice.inc.id); dismissNews() }} className="btn-solid ml-auto rounded-lg bg-inv px-4 py-2 text-[14px] font-bold text-inv-fg">보기</button>
+          <p className="min-w-0 flex-1 text-[15px]"><b className="num">{data.asOf}</b> {notice.text}</p>
+          <button onClick={() => { setOpen(notice.inc.id); dismissNews() }} className="btn-solid rounded-lg bg-inv px-4 py-2 text-[14px] font-bold text-inv-fg">보기</button>
           <button onClick={dismissNews} aria-label="알림 닫기" className="btn-text px-2 text-[18px] text-sub">×</button>
         </div>
       )}
       <StatusBand d={data} onOpen={setOpen} />
-      <div className="grid grid-cols-12 items-start gap-4">
-        <section aria-label="비상 목록" className="col-span-5 flex flex-col gap-3">
+      <div className="grid grid-cols-1 items-start gap-4 md:grid-cols-2 xl:grid-cols-12">
+        <section aria-label="비상 목록" className="flex min-w-0 flex-col gap-3 xl:col-span-5">
           <ColHead dot="bg-red" t="비상" sub="기존 센서 알람" n={`${data.emergency.length}건`} />
           {data.emergency.map((x, i) => i === 0
             ? <BigCard key={x.id} inc={x} asOf={data.asOf} onOpen={() => setOpen(x.id)} flash={news && changedNow(x)} />
             : <RowCard key={x.id} inc={x} onOpen={() => setOpen(x.id)} flash={news && changedNow(x)} />)}
         </section>
-        <section aria-label="예고 목록" className="col-span-4 flex flex-col gap-3">
+        <section aria-label="예고 목록" className="flex min-w-0 flex-col gap-3 xl:col-span-4">
           <ColHead dot="bg-blue rounded-none" t="예고" sub="Q-First 이상 징후 · 알람 전" n={`${data.warning.length}건`} />
           {data.warning.map((x) => <BigCard key={x.id} inc={x} asOf={data.asOf} onOpen={() => setOpen(x.id)} flash={news && changedNow(x)} />)}
           {!data.warning.length && <p className="rounded-xl border border-dashed border-card-bd px-4 py-6 text-center text-[14px] text-mute">지금 예고 중인 설비가 없어요</p>}
         </section>
-        <section aria-label="정상 설비" className="col-span-3 flex flex-col gap-2">
-          <ColHead dot="bg-green" t="정상" sub={data.normal.every((n) => n.operation.status === 'running') ? '이상 징후 없음 · 모두 가동' : '이상 징후 없음'} n={`${data.normal.length}대`} />
+        <section aria-label="정상 설비" className="grid min-w-0 gap-2 md:col-span-2 md:grid-cols-2 xl:col-span-3 xl:grid-cols-1">
+          <ColHead wide dot="bg-green" t="정상" sub={data.normal.every((n) => n.operation.status === 'running') ? '이상 징후 없음 · 모두 가동' : '이상 징후 없음'} n={`${data.normal.length}대`} />
           {data.normal.map((n) => <NormalCard key={n.equipment.id} n={n} />)}
         </section>
       </div>
@@ -95,10 +95,10 @@ function StatusBand({ d, onOpen }: { d: BoardData; onOpen: (id: string) => void 
   const check = first?.checks[0]
   return (
     <section aria-label="Q-First 판단 요약" className="ai-surface overflow-hidden rounded-xl text-band-fg">
-      <div className="flex items-center gap-3 border-b border-band-line px-5 py-2.5 text-[15px]">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 border-b border-band-line px-5 py-2.5 text-[15px]">
         <AiTag dark />
         <span className="text-band-mute"><b className="num text-band-fg">{d.asOf}</b> 기준 점검 순서</span>
-        <span className="ml-auto flex items-center gap-4 text-band-mute">
+        <span className="ml-auto flex flex-wrap items-center gap-x-4 gap-y-1 text-band-mute">
           {working.map((x) => (
             <span key={x.id}><HalfDot /> <b className="text-band-fg">{x.equipment.no}</b> 점검 중</span>
           ))}
@@ -109,16 +109,17 @@ function StatusBand({ d, onOpen }: { d: BoardData; onOpen: (id: string) => void 
       </div>
       {!first && <div className="px-5 py-5 text-[16px] text-band-mute">착수 전인 설비가 없어요</div>}
       {first && (
-        <div className="flex items-center gap-6 px-5 py-4">
+        <div className="flex flex-col gap-4 px-5 py-4 lg:flex-row lg:items-center lg:gap-6">
           <div className="flex shrink-0 flex-col">
             <span className="text-[14px] font-bold text-band-mute">지금 먼저</span>
             <span className="text-[46px] font-bold leading-none">{first.equipment.no}</span>
             <span className="mt-1 text-[14px] text-band-mute">{first.equipment.name}</span>
           </div>
-          <dl className="grid min-w-0 flex-1 grid-cols-[72px_1fr] items-center gap-x-3 gap-y-2.5 border-l border-band-line pl-6">
+          <dl className="grid min-w-0 flex-1 grid-cols-[72px_1fr] items-center gap-x-3 gap-y-2.5 border-band-line lg:border-l lg:pl-6">
             <dt className="text-[14px] text-band-mute">판단</dt>
             <dd className="flex flex-wrap items-center gap-1.5">
-              <span className="mr-1 text-[20px] font-bold">{first.group === 'emergency' ? '비상' : '예고'} {first.rank}위 · {first.grade}등급</span>
+              <span className="text-[20px] font-bold">{first.group === 'emergency' ? '비상' : '예고'} {first.rank}위</span>
+              <GradeWhy grade={first.grade} className="mr-1 text-[14px] text-band-mute" />
               {reasons.map((r) => (
                 <span key={r} className="rounded-full border border-band-line px-2.5 py-0.5 text-[14px] font-semibold">{r}</span>
               ))}
@@ -126,11 +127,11 @@ function StatusBand({ d, onOpen }: { d: BoardData; onOpen: (id: string) => void 
             <dt className="text-[14px] text-band-mute">먼저 확인</dt>
             <dd className="flex min-w-0 items-center gap-2 text-[17px] font-bold">
               <span className="num grid h-6 w-6 shrink-0 place-items-center rounded-full bg-card text-[13px] text-ink">1</span>
-              <span className="truncate">{check?.refined ? check.baseline : check?.label}</span>
+              <span className="min-w-0 truncate">{check?.refined ? check.baseline : check?.label}</span>
               {check?.refined && <span className="shrink-0 rounded border border-band-fg px-1.5 py-0.5 text-[12px] font-bold">Q-First 구체화 · 근거 {check.evidenceIds.length}건</span>}
             </dd>
           </dl>
-          <div className="flex shrink-0 flex-col items-end gap-2.5">
+          <div className="flex shrink-0 flex-row-reverse flex-wrap items-center justify-end gap-2.5 lg:flex-col lg:items-end">
             <button onClick={() => onOpen(first.id)} className="btn-light rounded-lg bg-card px-5 py-2.5 text-[16px] font-bold text-ink">{STATE_LABEL[first.status]} · 상세 보기 ›</button>
             {next.length > 0 && (
               <span className="flex items-center gap-1 text-[14px] text-band-mute">다음
@@ -148,9 +149,9 @@ function StatusBand({ d, onOpen }: { d: BoardData; onOpen: (id: string) => void 
   )
 }
 
-function ColHead({ dot, t, sub, n }: { dot: string; t: string; sub: string; n: string }) {
+function ColHead({ dot, t, sub, n, wide = false }: { dot: string; t: string; sub: string; n: string; wide?: boolean }) {
   return (
-    <div className="flex items-center gap-2 px-1">
+    <div className={cx('flex items-center gap-2 px-1', wide && 'md:col-span-2 xl:col-span-1')}>
       <span className={cx('h-2.5 w-2.5 rounded-full', dot)} />
       <h2 className="text-[16px] font-extrabold">{t}</h2>
       <span className="text-[13px] text-mute">{sub}</span>
@@ -166,18 +167,19 @@ function BigCard({ inc, onOpen, flash = false, asOf }: { inc: Incident; onOpen: 
   const insp = inc.operation.status === 'inspecting' && !!inc.operation.since
   return (
     <Card ring={tone(inc.group)} onOpen={onOpen} label={`${inc.equipment.no} 상세 열기`} className={cx('flex flex-col gap-3 overflow-hidden pb-5', flash && FLASH[inc.group])}>
-      {/* Q-First 판단이 카드의 머리: 순위·등급·이유 (순위 숫자는 여기에만) */}
+      {/* Q-First 판단이 카드의 머리: 순위(크게) · 등급 이유(작게) · 판단 이유 */}
       <div className="ai-surface flex flex-col gap-1.5 px-5 py-3.5 text-inv-fg">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
           <AiTag dark />
-          <span className="whitespace-nowrap text-[20px] font-bold leading-tight">{inc.group === 'emergency' ? '비상' : '예고'} <span className="num text-[26px]">{inc.rank}</span>위 · {inc.grade}등급</span>
+          <span className="whitespace-nowrap text-[20px] font-bold leading-tight">{inc.group === 'emergency' ? '비상' : '예고'} <span className="num text-[26px]">{inc.rank}</span>위</span>
+          <GradeWhy grade={inc.grade} className="text-[14px] text-band-mute" />
           {inc.previousGrade && <span className="ml-auto shrink-0 rounded-md border border-inv-fg px-2 py-0.5 text-[13px] font-bold">{inc.previousGroup ? '예고 ' : ''}{inc.previousGrade}등급 → {inc.grade}등급</span>}
         </div>
         <span className="text-[15px] leading-snug">{inc.whyFirst}</span>
       </div>
-      <div className="flex items-start gap-4 px-5">
+      <div className="flex flex-wrap items-start gap-4 px-5">
         <MachineFigure id={inc.equipment.id} zones={inc.zones} group={inc.group} size={150} />
-        <div className="flex flex-1 flex-col">
+        <div className="flex min-w-[120px] flex-1 flex-col">
           <h3 className="text-[36px] font-bold leading-tight">{inc.equipment.no}</h3>
           <span className="num text-[15px] font-semibold text-sub">{inc.equipment.name}</span>
         </div>
@@ -207,14 +209,14 @@ function BigCard({ inc, onOpen, flash = false, asOf }: { inc: Incident; onOpen: 
         <h4 className="-mt-1 text-[19px] font-bold">{inc.headline}</h4>
         <QualityLine q={inc.quality} />
         <div className="rounded-lg bg-soft p-3 text-left">
-          <div className="mb-1 flex items-baseline gap-2 text-[12px]">
+          <div className="mb-1 flex flex-wrap items-baseline gap-x-2 text-[12px]">
             <span className={cx('font-bold', t.tx)}>{s.source}</span>
             <span className="text-sub">{s.label} · 최근 60분</span>
             <span className="ml-auto text-sub">{diffText(s)}</span>
             <span className="num text-[26px] font-semibold text-ink">{fmt(s)}</span>
             <span className="text-[12px] text-mute">{s.unit}</span>
           </div>
-          <Sparkline s={s} w={inc.group === 'emergency' ? 540 : 460} h={64} color={t.line} detail />
+          <AutoSparkline s={s} h={64} color={t.line} detail />
         </div>
       </div>
     </Card>
@@ -224,27 +226,27 @@ function BigCard({ inc, onOpen, flash = false, asOf }: { inc: Incident; onOpen: 
 function RowCard({ inc, onOpen, flash = false }: { inc: Incident; onOpen: () => void; flash?: boolean }) {
   const t = TONE[tone(inc.group)]
   return (
-    <Card onOpen={onOpen} label={`${inc.equipment.no} 상세 열기`} className={cx('flex items-stretch gap-4 overflow-hidden pr-5', flash && FLASH[inc.group])}>
+    <Card onOpen={onOpen} label={`${inc.equipment.no} 상세 열기`} className={cx('flex items-stretch gap-3 overflow-hidden pr-4 sm:gap-4 sm:pr-5', flash && FLASH[inc.group])}>
       {/* 순위·등급 = Q-First 판단 → 판단 표면 안에 */}
-      <div className="ai-surface flex w-[92px] shrink-0 flex-col items-center justify-center gap-1 py-3 text-inv-fg">
+      <div className="ai-surface flex w-[76px] shrink-0 sm:w-[92px] flex-col items-center justify-center gap-1 py-3 text-inv-fg">
         <AiTag dark label="판단" />
         <span className="text-[15px] font-bold"><span className="num text-[30px] leading-none">{inc.rank}</span>위</span>
-        <span className="text-[14px] font-bold">{inc.grade}등급</span>
+        <span className="text-[12px] text-band-mute">{inc.grade}등급</span>
         {inc.previousGrade && <span className="rounded border border-inv-fg px-1 text-[11px] font-bold">{inc.previousGroup ? '예고 ' : ''}{inc.previousGrade} → {inc.grade}</span>}
       </div>
-      <div className="flex items-center"><MachineFigure id={inc.equipment.id} zones={inc.zones} group={inc.group} size={96} compact /></div>
+      <div className="hidden items-center sm:flex"><MachineFigure id={inc.equipment.id} zones={inc.zones} group={inc.group} size={96} compact /></div>
       <div className="flex min-w-0 flex-1 flex-col justify-center gap-1 py-3">
-        <div className="flex items-baseline gap-2 whitespace-nowrap"><span className="text-[24px] font-bold">{inc.equipment.no}</span><span className="num text-[13px] font-semibold text-sub">{inc.equipment.name}</span><OpChip op={inc.operation} /></div>
+        <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1"><span className="text-[24px] font-bold">{inc.equipment.no}</span><span className="num text-[13px] font-semibold text-sub">{inc.equipment.name}</span><OpChip op={inc.operation} /></div>
         <span className="text-[15px] font-bold leading-snug">{inc.headline}</span>
-        <div className="flex items-center gap-1.5 text-[13px]">
-          <span className="rounded border border-dashed border-mute px-1.5 py-0.5 font-bold">품질 영향 {inc.quality.impact === 'yes' ? '있음' : inc.quality.impact === 'no' ? '없음' : '미확인'}</span>
-          <span className="text-sub">{STATUS[inc.status]}</span>
+        <div className="flex flex-wrap items-center gap-1.5 text-[13px]">
+          <span className="whitespace-nowrap rounded border border-dashed border-mute px-1.5 py-0.5 font-bold">품질 영향 {inc.quality.impact === 'yes' ? '있음' : inc.quality.impact === 'no' ? '없음' : '미확인'}</span>
+          <span className="whitespace-nowrap text-sub">{STATUS[inc.status]}</span>
           <InvTag inv={inc.investigation} refined={inc.checks.some((c) => c.refined)} />
         </div>
       </div>
-      <div className="flex items-center gap-4">
-        <Sparkline s={inc.signal} w={84} h={30} color={t.line} />
-        <div className="flex w-[96px] flex-col items-end whitespace-nowrap">
+      <div className="flex shrink-0 items-center gap-4">
+        <span className="hidden 2xl:block"><Sparkline s={inc.signal} w={84} h={30} color={t.line} /></span>
+        <div className="hidden flex-col items-end whitespace-nowrap sm:flex">
           <span><span className="num text-[22px] font-semibold">{fmt(inc.signal)}</span><span className="text-[11px] text-mute">{inc.signal.unit}</span></span>
         </div>
         <span aria-hidden className="text-[13px] font-bold text-sub">상세 ›</span>

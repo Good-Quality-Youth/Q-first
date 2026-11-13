@@ -7,7 +7,7 @@ import photoInj from '../assets/photo-inj.webp'
 import photoTcu from '../assets/photo-tcu.webp'
 import { useApp } from '../components/Shell'
 import { useLoad } from '../components/useLoad'
-import { GradeChip, QualityLine, Sparkline, TONE, cx, diffText, fmt, tone } from '../components/ui'
+import { AutoSparkline, GradeChip, QualityLine, TONE, cx, diffText, fmt, tone } from '../components/ui'
 
 const OUTCOMES: { v: Outcome; key: string; t: string; sub: string; icon: string }[] = [
   { v: 'found', key: '1', t: '이상 발견', sub: '원인을 찾았어요', icon: '●' },
@@ -83,12 +83,12 @@ export default function Result() {
   const addChip = (c: string) => setMemo(memo ? `${memo} · ${c}` : c)
 
   return (
-    <main className="flex flex-col gap-4 px-6 pb-10 pt-4">
-      <div className="flex items-center gap-4">
+    <main className="flex flex-col gap-4 px-4 pb-10 pt-4 sm:px-6">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
         <button onClick={() => nav('/')} className="btn-text text-[14px] font-bold text-sub">← 사건</button>
         <h1 className="text-[24px] font-extrabold">점검 결과 입력</h1>
-        <span className="text-[13px] text-mute">관제실 PC 기준 · 키보드 1/2/3으로 결과 선택</span>
-        <ol className="ml-auto flex items-center gap-3" aria-label="진행 단계">
+        <span className="hidden text-[13px] text-mute lg:inline">관제실 PC 기준 · 키보드 1/2/3으로 결과 선택</span>
+        <ol className="flex flex-wrap items-center gap-3 xl:ml-auto" aria-label="진행 단계">
           {['상세 확인', '착수 결정', '결과 입력', '이력 저장'].map((s, i) => {
             const n = i + 1, ok = n < step || (n === 4 && done), on = n === step && !done
             return (
@@ -102,7 +102,7 @@ export default function Result() {
         </ol>
       </div>
 
-      <div className="grid grid-cols-[560px_1fr] items-start gap-4">
+      <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(0,560px)_1fr]">
         {/* 왼쪽: 설비 */}
         <section className={cx('flex flex-col gap-3 rounded-xl border-2 bg-card p-5', t.bd)}>
           <div className="flex items-center gap-2 text-[13px]">
@@ -118,7 +118,7 @@ export default function Result() {
               <span className={cx('font-bold', t.tx)}>{inc.signal.source}</span><span className="text-sub">{inc.signal.label} · 최근 60분</span>
               <span className="ml-auto num text-[24px] font-semibold">{fmt(inc.signal)}</span><span className="text-mute">{inc.signal.unit}</span>
             </div>
-            <Sparkline s={inc.signal} w={500} h={56} color={t.line} />
+            <AutoSparkline s={inc.signal} h={56} color={t.line} />
             <p className="mt-1 text-[12px] text-mute">{diffText(inc.signal)}</p>
           </div>
           <QualityLine q={inc.quality} />
@@ -158,7 +158,7 @@ export default function Result() {
             <fieldset disabled={!started || done} className={cx('flex flex-col gap-6', !started && 'opacity-40')}>
               <div className="flex flex-col gap-2">
                 <h4 className="text-[15px] font-bold">1 점검해 보니 <span className="text-[12px] font-normal text-mute">키보드 1 · 2 · 3</span></h4>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                   {OUTCOMES.map((o) => (
                     <button key={o.v} type="button" onClick={() => setOutcome(o.v)} aria-pressed={outcome === o.v}
                       className={cx('flex items-center gap-3 rounded-xl border-2 px-4 py-5 text-left', outcome === o.v ? 'border-ink bg-soft' : 'btn-line border-card-bd')}>
@@ -169,7 +169,7 @@ export default function Result() {
                   ))}
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <div className="flex flex-col gap-2">
                   <h4 className="text-[15px] font-bold">2 한 일 <span className="text-[12px] font-normal text-mute">여러 개 선택</span></h4>
                   <div className="grid grid-cols-2 gap-2">

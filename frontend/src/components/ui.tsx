@@ -1,5 +1,6 @@
 import { CAUTION } from '../api/mock'
 import type { ReactNode } from 'react'
+import { useWidth } from './useWidth'
 import sprite from '../assets/eqp-sprite.webp'
 import symbol from '../assets/logo-symbol.png'
 import { EQUIPMENT } from '../api/mock'
@@ -73,12 +74,20 @@ export function EqpIcon({ id, size = 64, dim = false, ring }: { id: string; size
   )
 }
 
+/** 5등급을 말로: 화면에서 크게 보이는 숫자는 순위(몇 번째로 갈지) 하나뿐이고, 등급은 이유 + 작은 등급 번호로 보인다 */
+export const GRADE_WHY: Record<Grade, string> = {
+  1: '알람 + 품질 영향 있음', 2: '알람 · 품질 영향 없음·미확인', 3: '이상 징후 + 품질 영향 있음', 4: '이상 징후 + 위험도 높음', 5: '이상 징후',
+}
+/** 등급 이유 한 줄: "알람 + 품질 영향 있음 · 1등급" (등급 번호는 작게) */
+export function GradeWhy({ grade, className }: { grade: Grade; className?: string }) {
+  return <span className={cx('whitespace-nowrap', className)}>{GRADE_WHY[grade]} <span className="text-[0.85em] font-normal opacity-80">· {grade}등급</span></span>
+}
+
 export function GradeChip({ grade, group, long = false }: { grade: Grade; group: AlertGroup; long?: boolean }) {
   const t = TONE[tone(group)]
-  const LONG: Record<Grade, string> = { 1: '비상 + 품질 영향', 2: '비상 + 품질 영향 없음/미확인', 3: '예고 + 품질 영향', 4: '예고 + 위험도 높음', 5: '예고' }
   return (
     <span className={cx('inline-flex items-center rounded px-1.5 py-0.5 text-[12px] font-bold border', t.tx, t.bg, t.bd)}>
-      {grade}등급{long ? ` · ${LONG[grade]}` : ''}
+      {long ? <GradeWhy grade={grade} /> : `${grade}등급`}
     </span>
   )
 }
@@ -201,6 +210,16 @@ export function Sparkline({ s, w, h, color, detail = false }: { s: SignalSeries;
   )
 }
 
+/** 칸 폭에 맞춰 늘어나는 그래프 (현황판 카드·상세·결과 입력). 폭을 재기 전에는 높이만 잡아 둔다 */
+export function AutoSparkline({ s, h, color, detail = false }: { s: SignalSeries; h: number; color: string; detail?: boolean }) {
+  const [ref, w] = useWidth<HTMLDivElement>(4)
+  return (
+    <div ref={ref} className="w-full min-w-0" style={{ minHeight: h + (detail ? 34 : 0) }}>
+      {w > 0 && <Sparkline s={s} w={w} h={h} color={color} detail={detail} />}
+    </div>
+  )
+}
+
 export const fmt = (s: SignalSeries) => {
   const v = s.values[s.values.length - 1]
   return s.unit === 'N·m' ? v.toFixed(2) : v.toFixed(1)
@@ -215,7 +234,7 @@ export const diffText = (s: SignalSeries) => {
 export function QualityLine({ q }: { q: QualityInfo }) {
   if (q.impact === 'no' && q.inspected) {
     return (
-      <div className="flex items-center gap-2 rounded-lg border border-line px-3 py-2 text-[13px] text-sub">
+      <div className="flex flex-wrap items-center gap-2 rounded-lg border border-line px-3 py-2 text-[13px] text-sub">
         <span className="rounded border border-card-bd px-1.5 py-0.5 text-[12px] font-bold text-ink">품질 영향 없음</span>
         {q.source} · {q.inspected}개 검사 · {q.defects ? `불량 ${q.defects}건 (${((q.defects / q.inspected) * 100).toFixed(1)}%) · 주의 기준 3% 미만` : '불량 없음'}
       </div>
@@ -223,7 +242,7 @@ export function QualityLine({ q }: { q: QualityInfo }) {
   }
   if (q.impact !== 'yes' || q.defects === undefined || !q.inspected) {
     return (
-      <div className="flex items-center gap-2 rounded-lg border border-dashed border-mute/60 px-3 py-2 text-[13px] text-sub">
+      <div className="flex flex-wrap items-center gap-2 rounded-lg border border-dashed border-mute/60 px-3 py-2 text-[13px] text-sub">
         <span className="rounded border border-dashed border-mute px-1.5 py-0.5 text-[12px] font-bold text-ink">품질 영향 미확인</span>
         {q.source} · 검사 결과 아직 없음
       </div>
@@ -232,11 +251,11 @@ export function QualityLine({ q }: { q: QualityInfo }) {
   const r = (q.defects / q.inspected) * 100
   const mx = Math.max(r * 1.1, 4)
   return (
-    <div className="flex items-center gap-3 rounded-lg border border-amber bg-amber-bg px-3 py-2">
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-lg border border-amber bg-amber-bg px-3 py-2">
       <span className="shrink-0 rounded bg-amber px-2 py-0.5 text-[12px] font-bold text-ink">▲ 품질 영향 있음</span>
       <span className="shrink-0 text-[13px] text-sub">{q.source}</span>
       {/* 불량률 막대 + 주의 기준(3%) 눈금. 비교 대상은 확정된 판정 기준뿐이다 */}
-      <div className="relative h-2 flex-1 rounded-full bg-line" aria-hidden>
+      <div className="relative h-2 min-w-[80px] flex-1 rounded-full bg-line" aria-hidden>
         <div className="h-2 rounded-full bg-amber" style={{ width: `${(r / mx) * 100}%` }} />
         <div className="absolute -top-1 h-4 w-0.5 bg-ink" style={{ left: `${(CAUTION / mx) * 100}%` }} />
       </div>

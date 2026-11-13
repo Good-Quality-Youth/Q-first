@@ -82,3 +82,21 @@ button:not(:disabled):active, [role="button"]:active { transform: translateY(1px
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 160px 160px;
 }
+
+/* 상세를 열면 3D 부위 핀에서 고리가 부드럽게 두 번 퍼져 "누를 수 있다"를 알린다.
+   핀 자체는 위치 계산(transform) 때문에 건드리지 않고, 뒤쪽 고리(::after)만 커지며 사라진다 */
+.pin-hint::after {
+  content: "";
+  position: absolute; inset: -2px; z-index: -1;
+  border-radius: 9999px;
+  border: 2px solid currentColor;
+  background: color-mix(in srgb, currentColor 10%, transparent);
+  opacity: 0; pointer-events: none;
+  animation: pin-ripple 1.6s cubic-bezier(0.22, 0.61, 0.36, 1) 0.9s 2 both;
+}
+@keyframes pin-ripple {
+  0% { transform: scale(1); opacity: 0; }
+  12% { opacity: 0.55; }
+  100% { transform: scale(1.45, 1.9); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .pin-hint::after { animation: none; } }

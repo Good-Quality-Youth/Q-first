@@ -37,11 +37,11 @@ export default function History() {
   const cur = rows.find((r) => r.id === sel) ?? list[0]
 
   return (
-    <main className="flex flex-col gap-4 px-6 pb-10 pt-4">
-      <div className="flex items-center gap-3">
+    <main className="flex flex-col gap-4 px-4 pb-10 pt-4 sm:px-6">
+      <div className="flex flex-wrap items-center gap-3">
         <h1 className="text-[24px] font-extrabold">이력</h1>
         <span className="text-[14px] text-sub">Q-First 판단 <b className="text-ink">{base.length}</b>건 중 담당자 확인 완료 <b className="text-ink">{n('이상 발견') + n('이상 없음') + n('판단 어려움')}</b>건</span>
-        <div className="ml-auto flex gap-3">
+        <div className="flex flex-wrap gap-3 xl:ml-auto">
           <Segmented label="기간" value={period} onChange={setPeriod}
             options={[{ v: 'today', t: '오늘' }, { v: 'week', t: '이번 주' }, { v: 'month', t: '이번 달', disabled: true }]} />
           <Segmented label="결과" value={filter} onChange={setFilter}
@@ -49,9 +49,9 @@ export default function History() {
         </div>
       </div>
 
-      <div className="grid grid-cols-[1fr_540px] items-start gap-4">
-        <div className="overflow-hidden rounded-xl border border-card-bd bg-card">
-          <table className="w-full text-left">
+      <div className="grid grid-cols-1 items-start gap-4 xl:grid-cols-[minmax(0,1fr)_540px]">
+        <div className="overflow-x-auto rounded-xl border border-card-bd bg-card">
+          <table className="w-full min-w-[680px] text-left">
             <thead className="border-b border-line text-[12px] text-sub">
               <tr><th className="px-5 py-3 font-semibold">발생</th><th className="font-semibold">설비</th><th className="font-semibold">이상</th><th className="font-semibold">구분</th><th className="font-semibold">결과</th><th className="pr-5 text-right font-semibold">처리</th></tr>
             </thead>

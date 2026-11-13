@@ -88,7 +88,7 @@ export function ChatDrawer() {
   return (
     <div className="fixed inset-0 z-40 flex justify-end bg-ink/20" onClick={closeChat}>
       <aside ref={ref} tabIndex={-1} role="dialog" aria-modal="true" aria-label="Q-First에게 물어보기" onClick={(e) => e.stopPropagation()}
-        className="flex h-full w-[440px] flex-col bg-card shadow-2xl outline-none">
+        className="flex h-full w-full flex-col sm:w-[440px] bg-card shadow-2xl outline-none">
         <div className="flex items-center gap-3 border-b border-line px-5 py-4">
           <h2 className="text-[17px] font-extrabold">물어보기</h2>
           <span className="text-[12px] text-mute">{board.asOf} 판단 기준</span>

@@ -112,7 +112,7 @@ export function Machine3D({ zones, group, focus = null, width = 420, height = 25
         return (
           <button key={p.zone} ref={(el) => { pinEls.current[p.zone] = el }} type="button" aria-pressed={on} onClick={() => onPin?.(on ? null : p.zone)}
             aria-label={`${LABEL[p.zone]} 확인 위치 보기 (확인 ${p.order.join('·')}번)`}
-            className={`absolute left-0 top-0 flex items-center gap-1 whitespace-nowrap rounded-full border-2 py-0.5 pl-1 pr-2.5 text-[12px] font-bold shadow-md transition-colors ${on ? 'border-ink bg-inv text-inv-fg' : `bg-card ${own ? (group === 'warning' ? 'border-blue text-blue-tx' : 'border-red text-red-tx') : 'border-ink text-ink'} hover:bg-soft`}`}>
+            className={`pin-hint absolute left-0 top-0 flex items-center gap-1 whitespace-nowrap rounded-full border-2 py-0.5 pl-1 pr-2.5 text-[12px] font-bold shadow-md transition-colors ${on ? 'border-ink bg-inv text-inv-fg' : `bg-card ${own ? (group === 'warning' ? 'border-blue text-blue-tx' : 'border-red text-red-tx') : 'border-ink text-ink'} hover:bg-soft`}`}>
             <span className={`num grid h-5 min-w-5 place-items-center rounded-full px-1 text-[11px] ${on ? 'bg-card text-ink' : 'bg-inv text-inv-fg'}`}>{p.order.join('·')}</span>
             {LABEL[p.zone]}
             <span aria-hidden="true" className={`absolute left-1/2 top-full h-2 w-0.5 -translate-x-1/2 ${on ? 'bg-ink' : own ? (group === 'warning' ? 'bg-blue' : 'bg-red') : 'bg-ink'}`} />
